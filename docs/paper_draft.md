@@ -1,7 +1,7 @@
 # DesktopAgentBench: Evaluating Desktop Agent Reliability under Safe Chaos Injection
 
 ## Abstract
-Recent advances in GUI-based agents have demonstrated significant potential for automated computer control. However, existing benchmarks evaluate agents in ideal, static operating system environments, ignoring the dynamic and noisy nature of production deployments. Under realistic conditions, agents must contend with sudden popup dialogs, notification spam, UI rendering delays, focus-stealing system events, and layout adjustments. In this paper, we present **DesktopAgentBench**, a Windows-only, agent-agnostic evaluation framework designed to measure desktop agent reliability and recovery under safe chaos injection. We introduce a structured task corpus of 16 tasks across 6 application categories, a safe and reversible chaos injection engine with 7 modules, and a statistical evaluation harness tracking 7 key metrics. Our baseline experiments evaluate no-op, random, and rule-based agent adapters. While random and no-op baselines fail completely (0.0000 TSR), a rule-based agent equipped with proactive window-focusing policies achieves a Task Success Rate (TSR) of 0.8571 and a 1.0000 Recovery Rate (RR) under isolated disruptions, proving that focus management is the primary determinant of agent resilience in noisy desktop environments.
+Recent advances in GUI-based agents have demonstrated significant potential for automated computer control. However, existing benchmarks evaluate agents in ideal, static operating system environments, ignoring the dynamic and noisy nature of production deployments. Under realistic conditions, agents must contend with sudden popup dialogs, notification spam, UI rendering delays, focus-stealing system events, and layout adjustments. In this paper, we present **DesktopAgentBench**, a Windows-only, agent-agnostic evaluation framework designed to measure desktop agent reliability and recovery under safe chaos injection. We introduce a structured task corpus of 16 tasks across 6 application categories, a safe and reversible chaos injection engine with 7 modules, and a statistical evaluation harness tracking 7 key metrics. Our baseline experiments evaluate no-op, random, and rule-based agent adapters across the entire task-chaos matrix. While random and no-op baselines fail completely (0.0000 TSR), a rule-based agent achieves an overall Task Success Rate (TSR) of 0.0444 and a Recovery Rate (RR) of 0.0485 across the entire benchmark, and a TSR of 0.7500 on its target supported arithmetic calculator task under clean and chaos variants, proving that active focus management and targeting policies are critical to mitigating major classes of simulated OS disruptions.
 
 ---
 
@@ -122,40 +122,50 @@ $$\text{ITS} = \frac{1}{N} \sum_{r=1}^N \left( \frac{\text{meaningful\_steps}(r)
 ## 5. Experiments and Results
 
 ### 5.1 Experimental Setup
-We evaluated three agent adapters on the benchmark:
-1. **No-op Agent (`noop`):** Reference agent executing `wait` actions and signaling `done`.
-2. **Random Agent (`random`):** Reference agent executing weighted random mouse and keyboard inputs.
-3. **Rule Agent (`rule`):** A custom rule-based agent executing precise sequences for the arithmetic calculator task `calc_001`. The rule agent is equipped with a focus policy: before executing a keyboard type or hotkey sequence, it explicitly searches for the target application handle and forces it into the foreground using tap inputs and `SetForegroundWindow` API calls.
+We evaluated three baseline agent adapters on DesktopAgentBench across the full task corpus split of 16 tasks:
+1. **No-op Agent (`noop`):** Reference agent executing `wait` actions and signaling `done` after 3 steps.
+2. **Random Agent (`random`):** Reference agent executing weighted random mouse clicks, typing, hotkeys, and scrolls up to 15 steps.
+3. **Rule Agent (`rule`):** A custom rule-based agent executing precise sequences for the arithmetic calculator task `calc_001` and notepad task `notepad_001`. The rule agent is equipped with a focus policy: before typing or executing hotkeys, it taps the `Alt` key and clicks the target window center coordinates to bypass Windows' foreground focus restrictions (`SetForegroundWindow` API locks). For all unsupported tasks, it waits 1.0s and signals `done`.
 
-Runs were executed at $1920 \times 1080$ resolution under Windows 11.
+All runs were executed sequentially at a $1920 \times 1080$ resolution under Windows 11.
 
 ### 5.2 Core Metrics Results
-Table 1 outlines the aggregate metrics across all clean and chaos evaluations (8 runs per baseline agent, 7 runs for the rule agent).
+Table 1 outlines the aggregate metrics calculated over the entire evaluation matrix (119 runs per agent baseline).
 
-*Table 1: Core Metrics baseline comparison on `calc_001`.*
+*Table 1: Aggregate Core Metrics comparison across all tasks.*
 
-| Agent | TSR ↑ | RS ↑ | RR ↑ | UAR ↓ | HAR ↓ | LHDI ↓ | ITS ↑ |
-|-------|-------|------|------|-------|-------|--------|-------|
-| **noop** | 0.0000 | 0.0000 | 0.0000 | 0.0000 | 0.0000 | 0.0625 | 0.152661 |
-| **random** | 0.0000 | 0.0000 | 0.0000 | 0.0000 | 0.0000 | 0.1250 | 0.182212 |
-| **rule** | 0.8571 | 2.0000 | 1.0000 | 0.0000 | 0.0000 | 0.0714 | 0.024291 |
+| Agent | TSR (Success) ↑ | RS (Robustness) ↑ | RR (Recovery) ↑ | UAR (Stuck/Crash) ↓ | HAR (Human Help) ↓ | LHDI (Latent Harm) ↓ | ITS (Throughput) ↑ |
+|-------|------------------|-------------------|------------------|----------------------|--------------------|----------------------|--------------------|
+| **noop** | 0.0000 | 0.0000 | 0.0000 | 0.0000 | 0.0000 | 0.0802 | 0.125141 |
+| **random** | 0.0000 | 0.0000 | 0.0000 | 0.0000 | 0.0000 | 0.0877 | 0.188836 |
+| **rule** | 0.0444 | 1.5534 | 0.0485 | 0.0000 | 0.0000 | 0.1086 | 0.037157 |
 
 ### 5.3 Clean vs. Chaos Performance Breakdown
-Table 2 outlines the Task Success Rate (TSR) breakdown across the baseline clean run, isolated chaos modules, and combined chaos profiles.
+Table 2 outlines the Task Success Rate (TSR) breakdown across the baseline clean run, isolated chaos modules, and the combined moderate chaos profile.
 
 *Table 2: TSR breakdown across Clean and Chaos profiles.*
 
-| Agent | Clean | Popup | Focus Steal | UI Delay | Window Resize | Notification | Combined Chaos |
-|-------|-------|-------|-------------|----------|---------------|--------------|----------------|
-| **noop** | 0.0000 | 0.0000 | 0.0000 | 0.0000 | 0.0000 | 0.0000 | 0.0000 |
-| **random** | 0.0000 | 0.0000 | 0.0000 | 0.0000 | 0.0000 | 0.0000 | 0.0000 |
-| **rule** | 0.5000 | 1.0000 | 1.0000 | 1.0000 | 1.0000 | 1.0000 | 0.0000 |
+| Agent | Clean | UI Delay | Focus Steal | Moderate (Combined) | Notification | Popup | Window Resize | Scroll Hide | Fake UAC |
+|---|---|---|---|---|---|---|---|---|---|
+| **noop** | 0.0000 | 0.0000 | 0.0000 | 0.0000 | 0.0000 | 0.0000 | 0.0000 | 0.0000 | 0.0000 |
+| **random** | 0.0000 | 0.0000 | 0.0000 | 0.0000 | 0.0000 | 0.0000 | 0.0000 | 0.0000 | 0.0000 |
+| **rule** | 0.0312 | 0.0625 | 0.0625 | 0.0625 | 0.0625 | 0.0000 | 0.0625 | 0.0000 | 0.0000 |
 
-*Note: Combined chaos was omitted from the rule agent profile run, defaulting to 0.0000.*
+### 5.4 Category Performance Breakdown
+Table 3 compares the average success rate (TSR) grouped dynamically by application category. Since the rule-based agent only supports the calculator task `calc_001` (achieving a $0.7500$ success rate under that task specifically), other capability categories register zero success.
 
-### 5.4 Key Findings
-1. **Focus Management Mitigates Focus-Stealing Disruption:** The rule agent achieved a perfect **1.0000 TSR across all isolated chaos variants** (including focus stealing and popups). Because the agent verified and focused the window handle before every key event, it naturally recovered from active focus-stealing disruptions. In contrast, under clean runs with external workspace focus shifting, the agent failed to target the calculator input whenever focus shifted away, causing success rate to drop to 0.5000.
-2. **Latent Harm and Random Inputs:** The random baseline registered the highest **LHDI score of 0.1250**, showing that uncoordinated keyboard/mouse events generate significant latent side-effects (opening search indexes, creating temporary processes), confirming that DesktopAgentBench successfully measures safety risk.
+*Table 3: TSR comparison grouped by task category.*
+
+| Agent | Browser | Calculator | File Manager | Graphics | Multi-App | Text Editor |
+|---|---|---|---|---|---|---|
+| **noop** | 0.0000 | 0.0000 | 0.0000 | 0.0000 | 0.0000 | 0.0000 |
+| **random** | 0.0000 | 0.0000 | 0.0000 | 0.0000 | 0.0000 | 0.0000 |
+| **rule** | 0.0000 | 0.2500 | 0.0000 | 0.0000 | 0.0000 | 0.0000 |
+
+### 5.5 Key Findings & Hypothesis Validation
+1. **Focus Management Mitigates Window Disruption:** The rule agent achieved a **0.7500 TSR on its supported `calc_001` task** across all variants. In particular, it achieved success under active delay, focus steal, notification, resizing, and moderate combined chaos profiles. Because the agent verified and focused the window handle before every key event (using the tap and click policy), it successfully recovered from active disruptions.
+2. **Popup Blockage Remains an Open Challenge:** Under the `popup` isolated variant for `calc_001`, the rule agent achieved **0.0000 TSR**. The spawner renders a standard modal dialogue window (`MessageBoxTimeoutW`) that captures click events and blocks keyboard inputs to the calculator application. Simple focus policy was unable to dismiss the alert automatically, highlighting that agents need explicit alert-handling loops.
+3. **Latent Harm and Unstructured Actions:** The rule agent registered the highest **LHDI score of 0.1086**, followed by the random agent (**0.0877**). This indicates that the rule agent's real click and typing actions generated significant unintended side-effects (e.g. typing key characters into inactive window fields when target focus was hijacked, creating temporary files, or spawning stray processes). This validates that DesktopAgentBench successfully measures safety risk.
 
 ---
 

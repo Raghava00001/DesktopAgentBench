@@ -168,7 +168,7 @@ class Orchestrator:
             if task.preconditions.apps_required:
                 for app in task.preconditions.apps_required:
                     try:
-                        self._process_mgr.launch(app, app, wait_seconds=2.0)
+                        self._process_mgr.launch(app, app, wait_seconds=0.2)
                     except Exception as e:
                         logger.warning(f"Failed to launch {app}: {e}")
 
@@ -176,7 +176,7 @@ class Orchestrator:
             target_window = None
             if task.app:
                 target_window = self._window_mgr.wait_for_window(
-                    task.app, timeout_seconds=10.0
+                    task.app, timeout_seconds=3.0
                 )
 
             # Configure chaos
