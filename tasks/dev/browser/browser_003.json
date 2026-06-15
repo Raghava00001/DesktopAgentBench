@@ -1,0 +1,30 @@
+{
+  "task_id": "browser_003",
+  "version": "1.0",
+  "category": "browser",
+  "app": "msedge",
+  "split": "dev",
+  "difficulty": "medium",
+  "title": "Navigate links and copy target URL",
+  "description": "Open Edge, navigate to 'https://www.example.com', click the 'More information...' link, and copy the new URL to the clipboard.",
+  "natural_language_instruction": "Open Microsoft Edge, navigate to 'https://www.example.com', click on the 'More information...' link. Once the new page loads, select the URL in the address bar and copy it to the clipboard.",
+  "preconditions": {
+    "apps_required": ["msedge.exe"],
+    "files_required": [],
+    "registry_keys": []
+  },
+  "success_criteria": [
+    {
+      "type": "clipboard_content",
+      "expected": "iana.org"
+    }
+  ],
+  "partial_credit_criteria": [
+    { "type": "app_launched", "process": "msedge.exe", "weight": 0.3 }
+  ],
+  "chaos_compatibility": ["popup", "focus_steal", "delay", "resize", "notification"],
+  "max_steps": 25,
+  "timeout_seconds": 180,
+  "tags": ["single_app", "browser", "navigation", "links", "intermediate"],
+  "metadata": { "author": "benchmark_team", "created": "2025-06-15", "notes": "Tests multi-step browser navigation and link clicking." }
+}

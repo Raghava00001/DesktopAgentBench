@@ -1,0 +1,48 @@
+# Severe chaos profile — aggressive stress testing
+
+profile_name: severe
+description: "Maximum disruption — stress test for agent resilience limits"
+
+popup_spawner:
+  enabled: true
+  frequency_range: [5, 15]
+  duration_range: [5, 15]
+  popup_types: ["update", "sync", "notification", "restart"]
+  max_concurrent: 3
+
+focus_stealer:
+  enabled: true
+  frequency_range: [8, 20]
+  steal_duration_range: [2, 5]
+
+ui_delay:
+  enabled: true
+  frequency_range: [10, 30]
+  delay_range_ms: [1000, 4000]
+  probability: 0.5
+
+window_resizer:
+  enabled: true
+  frequency_range: [10, 30]
+  resize_magnitude: large
+
+uac_faker:
+  enabled: true
+  frequency_range: [30, 90]
+  dim_background: true
+  require_interaction: true
+
+notification_spoofer:
+  enabled: true
+  frequency_range: [5, 15]
+  notification_types: ["email", "chat", "calendar"]
+
+scroll_hider:
+  enabled: true
+  frequency_range: [20, 60]
+  hide_vertical: true
+  hide_horizontal: false
+
+randomization:
+  seed: null
+  injection_jitter_pct: 30

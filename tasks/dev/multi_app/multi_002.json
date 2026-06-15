@@ -1,0 +1,37 @@
+{
+  "task_id": "multi_002",
+  "version": "1.0",
+  "category": "multi_app",
+  "app": "notepad",
+  "split": "dev",
+  "difficulty": "hard",
+  "title": "Copy web page text to Notepad",
+  "description": "Open Edge, navigate to 'https://www.example.com', copy the text of the first paragraph, paste it into Notepad, and save it on the Desktop.",
+  "natural_language_instruction": "Open Microsoft Edge and navigate to 'https://www.example.com'. Copy the text of the first paragraph (containing 'illustrative examples'). Then open Notepad, paste that text, and save the file as 'domain_info.txt' on your Desktop.",
+  "preconditions": {
+    "apps_required": ["msedge.exe", "notepad.exe"],
+    "files_required": [],
+    "registry_keys": []
+  },
+  "success_criteria": [
+    {
+      "type": "file_exists",
+      "path": "%USERPROFILE%\\Desktop\\domain_info.txt"
+    },
+    {
+      "type": "file_content_matches",
+      "path": "%USERPROFILE%\\Desktop\\domain_info.txt",
+      "expected": "illustrative examples"
+    }
+  ],
+  "partial_credit_criteria": [
+    { "type": "app_launched", "process": "msedge.exe", "weight": 0.15 },
+    { "type": "app_launched", "process": "notepad.exe", "weight": 0.15 },
+    { "type": "clipboard_content", "expected": "illustrative examples", "weight": 0.3 }
+  ],
+  "chaos_compatibility": ["popup", "focus_steal", "delay", "resize", "uac", "notification", "scroll_hide"],
+  "max_steps": 35,
+  "timeout_seconds": 240,
+  "tags": ["multi_app", "cross_app_workflow", "browser", "notepad", "advanced"],
+  "metadata": { "author": "benchmark_team", "created": "2025-06-15", "notes": "Multi-app workflow: Edge → Notepad." }
+}

@@ -1,0 +1,30 @@
+{
+  "task_id": "paint_001",
+  "version": "1.0",
+  "category": "graphics",
+  "app": "paint",
+  "split": "dev",
+  "difficulty": "easy",
+  "title": "Create and save a simple drawing",
+  "description": "Open MS Paint, draw a shape, and save the drawing as 'rect.png' on the Desktop.",
+  "natural_language_instruction": "Open MS Paint, select the rectangle tool, draw a shape on the canvas, and save the file as 'rect.png' on your Desktop.",
+  "preconditions": {
+    "apps_required": ["mspaint.exe"],
+    "files_required": [],
+    "registry_keys": []
+  },
+  "success_criteria": [
+    {
+      "type": "file_exists",
+      "path": "%USERPROFILE%\\Desktop\\rect.png"
+    }
+  ],
+  "partial_credit_criteria": [
+    { "type": "app_launched", "process": "mspaint.exe", "weight": 0.3 }
+  ],
+  "chaos_compatibility": ["popup", "focus_steal", "delay", "resize", "notification"],
+  "max_steps": 20,
+  "timeout_seconds": 120,
+  "tags": ["single_app", "graphics", "drawing", "beginner"],
+  "metadata": { "author": "benchmark_team", "created": "2025-06-15", "notes": "Basic MS Paint interaction and saving." }
+}

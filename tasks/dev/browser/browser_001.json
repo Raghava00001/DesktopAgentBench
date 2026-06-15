@@ -1,0 +1,30 @@
+{
+  "task_id": "browser_001",
+  "version": "1.0",
+  "category": "browser",
+  "app": "msedge",
+  "split": "dev",
+  "difficulty": "easy",
+  "title": "Navigate to a webpage and copy text",
+  "description": "Open Edge, navigate to 'https://www.example.com', and copy the heading 'Example Domain' to the clipboard.",
+  "natural_language_instruction": "Open Microsoft Edge, navigate to the URL 'https://www.example.com', double-click or select the main heading 'Example Domain', and copy it to your clipboard using Ctrl+C.",
+  "preconditions": {
+    "apps_required": ["msedge.exe"],
+    "files_required": [],
+    "registry_keys": []
+  },
+  "success_criteria": [
+    {
+      "type": "clipboard_content",
+      "expected": "Example Domain"
+    }
+  ],
+  "partial_credit_criteria": [
+    { "type": "app_launched", "process": "msedge.exe", "weight": 0.3 }
+  ],
+  "chaos_compatibility": ["popup", "focus_steal", "delay", "resize", "notification"],
+  "max_steps": 20,
+  "timeout_seconds": 120,
+  "tags": ["single_app", "browser", "navigation", "clipboard", "beginner"],
+  "metadata": { "author": "benchmark_team", "created": "2025-06-15", "notes": "Basic browser navigation and copy." }
+}

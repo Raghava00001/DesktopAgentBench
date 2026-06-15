@@ -1,0 +1,51 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.backends._legacy:_Backend"
+
+[project]
+name = "desktop-agent-bench"
+version = "0.1.0"
+description = "Windows-only, agent-agnostic reliability benchmark for desktop agents with chaos injection"
+readme = "README.md"
+requires-python = ">=3.11"
+license = {text = "MIT"}
+
+dependencies = [
+    "pydantic>=2.0",
+    "pyyaml>=6.0",
+    "pillow>=10.0",
+    "numpy>=1.24",
+    "scipy>=1.11",
+    "click>=8.1",
+    "rich>=13.0",
+    "pywin32>=306",
+    "comtypes>=1.3",
+    "jinja2>=3.1",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0",
+    "pytest-cov>=4.0",
+    "ruff>=0.1",
+]
+
+[project.scripts]
+dab = "bench:cli"
+
+[project.entry-points."desktopagentbench.agents"]
+noop = "src.agents.builtin.noop_agent:NoopAgent"
+random = "src.agents.builtin.random_agent:RandomAgent"
+rule = "src.agents.builtin.rule_agent:RuleAgent"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["src*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"

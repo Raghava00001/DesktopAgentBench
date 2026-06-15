@@ -1,0 +1,30 @@
+{
+  "task_id": "paint_002",
+  "version": "1.0",
+  "category": "graphics",
+  "app": "paint",
+  "split": "dev",
+  "difficulty": "medium",
+  "title": "Convert image format in Paint",
+  "description": "Open 'rect.png' from the Desktop in Paint, and save it as 'rect.jpg' on the Desktop.",
+  "natural_language_instruction": "Open MS Paint, open the file 'rect.png' from your Desktop, and save it under the new name 'rect.jpg' (JPEG format) on your Desktop.",
+  "preconditions": {
+    "apps_required": ["mspaint.exe"],
+    "files_required": ["%USERPROFILE%\\Desktop\\rect.png"],
+    "registry_keys": []
+  },
+  "success_criteria": [
+    {
+      "type": "file_exists",
+      "path": "%USERPROFILE%\\Desktop\\rect.jpg"
+    }
+  ],
+  "partial_credit_criteria": [
+    { "type": "app_launched", "process": "mspaint.exe", "weight": 0.3 }
+  ],
+  "chaos_compatibility": ["popup", "focus_steal", "delay", "resize", "notification"],
+  "max_steps": 20,
+  "timeout_seconds": 120,
+  "tags": ["single_app", "graphics", "conversion", "intermediate"],
+  "metadata": { "author": "benchmark_team", "created": "2025-06-15", "notes": "Tests file loading and Save As JPG." }
+}

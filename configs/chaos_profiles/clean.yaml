@@ -1,0 +1,23 @@
+# Clean profile — no chaos injection (baseline)
+
+profile_name: clean
+description: "No chaos injection — clean baseline for comparison"
+
+popup_spawner:
+  enabled: false
+focus_stealer:
+  enabled: false
+ui_delay:
+  enabled: false
+window_resizer:
+  enabled: false
+uac_faker:
+  enabled: false
+notification_spoofer:
+  enabled: false
+scroll_hider:
+  enabled: false
+
+randomization:
+  seed: null
+  injection_jitter_pct: 0

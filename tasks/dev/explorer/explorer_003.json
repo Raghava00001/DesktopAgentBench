@@ -1,0 +1,30 @@
+{
+  "task_id": "explorer_003",
+  "version": "1.0",
+  "category": "file_manager",
+  "app": "explorer",
+  "split": "dev",
+  "difficulty": "medium",
+  "title": "Create zip archive of a folder",
+  "description": "Compress the folder 'BenchTest' on the Desktop into a zip archive named 'BenchTest.zip'.",
+  "natural_language_instruction": "Open File Explorer, navigate to the Desktop, and compress the folder 'BenchTest' into a zip file named 'BenchTest.zip' on the Desktop.",
+  "preconditions": {
+    "apps_required": ["explorer.exe"],
+    "files_required": ["%USERPROFILE%\\Desktop\\BenchTest"],
+    "registry_keys": []
+  },
+  "success_criteria": [
+    {
+      "type": "file_exists",
+      "path": "%USERPROFILE%\\Desktop\\BenchTest.zip"
+    }
+  ],
+  "partial_credit_criteria": [
+    { "type": "app_launched", "process": "explorer.exe", "weight": 0.3 }
+  ],
+  "chaos_compatibility": ["popup", "focus_steal", "delay", "resize", "notification"],
+  "max_steps": 25,
+  "timeout_seconds": 150,
+  "tags": ["single_app", "file_management", "compression", "intermediate"],
+  "metadata": { "author": "benchmark_team", "created": "2025-06-15", "notes": "Tests folder zipping/compression workflow." }
+}

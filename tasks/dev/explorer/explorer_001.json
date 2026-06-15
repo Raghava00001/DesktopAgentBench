@@ -1,0 +1,30 @@
+{
+  "task_id": "explorer_001",
+  "version": "1.0",
+  "category": "file_manager",
+  "app": "explorer",
+  "split": "dev",
+  "difficulty": "easy",
+  "title": "Create a new folder on the Desktop",
+  "description": "Open File Explorer and create a new folder named 'BenchTest' on the Desktop.",
+  "natural_language_instruction": "Open File Explorer, navigate to the Desktop, and create a new folder named 'BenchTest'.",
+  "preconditions": {
+    "apps_required": ["explorer.exe"],
+    "files_required": [],
+    "registry_keys": []
+  },
+  "success_criteria": [
+    {
+      "type": "file_exists",
+      "path": "%USERPROFILE%\\Desktop\\BenchTest"
+    }
+  ],
+  "partial_credit_criteria": [
+    { "type": "app_launched", "process": "explorer.exe", "weight": 0.3 }
+  ],
+  "chaos_compatibility": ["popup", "focus_steal", "delay", "resize", "notification", "scroll_hide"],
+  "max_steps": 15,
+  "timeout_seconds": 90,
+  "tags": ["single_app", "file_management", "beginner"],
+  "metadata": { "author": "benchmark_team", "created": "2025-06-15", "notes": "Basic folder creation." }
+}

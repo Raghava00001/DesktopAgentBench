@@ -1,0 +1,30 @@
+{
+  "task_id": "browser_002",
+  "version": "1.0",
+  "category": "browser",
+  "app": "msedge",
+  "split": "dev",
+  "difficulty": "medium",
+  "title": "Save a webpage as HTML",
+  "description": "Open Edge, navigate to 'https://www.example.com', and save the webpage to the Desktop as 'example.html'.",
+  "natural_language_instruction": "Open Microsoft Edge, navigate to the URL 'https://www.example.com', press Ctrl+S to open the Save As dialog, and save the page as 'example.html' on your Desktop.",
+  "preconditions": {
+    "apps_required": ["msedge.exe"],
+    "files_required": [],
+    "registry_keys": []
+  },
+  "success_criteria": [
+    {
+      "type": "file_exists",
+      "path": "%USERPROFILE%\\Desktop\\example.html"
+    }
+  ],
+  "partial_credit_criteria": [
+    { "type": "app_launched", "process": "msedge.exe", "weight": 0.3 }
+  ],
+  "chaos_compatibility": ["popup", "focus_steal", "delay", "resize", "notification"],
+  "max_steps": 25,
+  "timeout_seconds": 150,
+  "tags": ["single_app", "browser", "navigation", "file_io", "intermediate"],
+  "metadata": { "author": "benchmark_team", "created": "2025-06-15", "notes": "Tests browser page saving." }
+}

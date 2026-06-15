@@ -1,0 +1,36 @@
+{
+  "task_id": "notepad_001",
+  "version": "1.0",
+  "category": "text_editor",
+  "app": "notepad",
+  "split": "dev",
+  "difficulty": "easy",
+  "title": "Create and save a text file",
+  "description": "Open Notepad, type 'Hello World', and save the file as 'hello.txt' on the Desktop.",
+  "natural_language_instruction": "Please open Notepad, type 'Hello World' into the editor, then save the file as 'hello.txt' on your Desktop.",
+  "preconditions": {
+    "apps_required": ["notepad.exe"],
+    "files_required": [],
+    "registry_keys": []
+  },
+  "success_criteria": [
+    {
+      "type": "file_exists",
+      "path": "%USERPROFILE%\\Desktop\\hello.txt"
+    },
+    {
+      "type": "file_content_matches",
+      "path": "%USERPROFILE%\\Desktop\\hello.txt",
+      "expected": "Hello World"
+    }
+  ],
+  "partial_credit_criteria": [
+    { "type": "app_launched", "process": "notepad.exe", "weight": 0.3 },
+    { "type": "text_typed", "content": "Hello World", "weight": 0.3 }
+  ],
+  "chaos_compatibility": ["popup", "focus_steal", "delay", "resize", "uac", "notification"],
+  "max_steps": 20,
+  "timeout_seconds": 120,
+  "tags": ["single_app", "file_io", "beginner"],
+  "metadata": { "author": "benchmark_team", "created": "2025-06-15", "notes": "Baseline Notepad task." }
+}

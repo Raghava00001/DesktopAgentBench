@@ -1,0 +1,35 @@
+{
+  "task_id": "notepad_003",
+  "version": "1.0",
+  "category": "text_editor",
+  "app": "notepad",
+  "split": "dev",
+  "difficulty": "medium",
+  "title": "Change font and save as UTF-8",
+  "description": "Open Notepad, type a message with special characters, change the encoding to UTF-8, and save.",
+  "natural_language_instruction": "Open Notepad and type 'Héllo Wörld — special chars: é, ñ, ü'. Save the file as 'unicode_test.txt' on the Desktop with UTF-8 encoding.",
+  "preconditions": {
+    "apps_required": ["notepad.exe"],
+    "files_required": [],
+    "registry_keys": []
+  },
+  "success_criteria": [
+    {
+      "type": "file_exists",
+      "path": "%USERPROFILE%\\Desktop\\unicode_test.txt"
+    },
+    {
+      "type": "file_content_matches",
+      "path": "%USERPROFILE%\\Desktop\\unicode_test.txt",
+      "expected": "Héllo Wörld"
+    }
+  ],
+  "partial_credit_criteria": [
+    { "type": "app_launched", "process": "notepad.exe", "weight": 0.3 }
+  ],
+  "chaos_compatibility": ["popup", "focus_steal", "delay", "resize", "notification", "scroll_hide"],
+  "max_steps": 25,
+  "timeout_seconds": 150,
+  "tags": ["single_app", "encoding", "unicode"],
+  "metadata": { "author": "benchmark_team", "created": "2025-06-15", "notes": "Tests encoding awareness." }
+}

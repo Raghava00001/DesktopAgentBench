@@ -1,0 +1,30 @@
+{
+  "task_id": "calc_001",
+  "version": "1.0",
+  "category": "calculator",
+  "app": "calc",
+  "split": "dev",
+  "difficulty": "easy",
+  "title": "Perform basic arithmetic",
+  "description": "Open Calculator, compute 42 * 17, and copy the result to the clipboard.",
+  "natural_language_instruction": "Open the Windows Calculator app, compute 42 multiplied by 17, and copy the result to the clipboard using Ctrl+C.",
+  "preconditions": {
+    "apps_required": ["calc.exe"],
+    "files_required": [],
+    "registry_keys": []
+  },
+  "success_criteria": [
+    {
+      "type": "clipboard_content",
+      "expected": "714"
+    }
+  ],
+  "partial_credit_criteria": [
+    { "type": "app_launched", "process": "CalculatorApp.exe", "weight": 0.3 }
+  ],
+  "chaos_compatibility": ["popup", "focus_steal", "delay", "resize", "notification"],
+  "max_steps": 15,
+  "timeout_seconds": 90,
+  "tags": ["single_app", "arithmetic", "beginner"],
+  "metadata": { "author": "benchmark_team", "created": "2025-06-15", "notes": "Basic arithmetic computation." }
+}

@@ -1,0 +1,30 @@
+{
+  "task_id": "calc_003",
+  "version": "1.0",
+  "category": "calculator",
+  "app": "calc",
+  "split": "dev",
+  "difficulty": "medium",
+  "title": "Temperature conversion",
+  "description": "Switch Calculator to Temperature Converter, convert 100 Celsius to Fahrenheit, and copy the result to the clipboard.",
+  "natural_language_instruction": "Open the Windows Calculator app, navigate to the Temperature Converter, convert 100 degrees Celsius to Fahrenheit, and copy the resulting value (212) to the clipboard using Ctrl+C.",
+  "preconditions": {
+    "apps_required": ["calc.exe"],
+    "files_required": [],
+    "registry_keys": []
+  },
+  "success_criteria": [
+    {
+      "type": "clipboard_content",
+      "expected": "212"
+    }
+  ],
+  "partial_credit_criteria": [
+    { "type": "app_launched", "process": "CalculatorApp.exe", "weight": 0.3 }
+  ],
+  "chaos_compatibility": ["popup", "focus_steal", "delay", "resize", "notification"],
+  "max_steps": 25,
+  "timeout_seconds": 150,
+  "tags": ["single_app", "converter", "temperature", "intermediate"],
+  "metadata": { "author": "benchmark_team", "created": "2025-06-15", "notes": "Tests Converter mode of the calculator." }
+}

@@ -1,0 +1,37 @@
+{
+  "task_id": "multi_001",
+  "version": "1.0",
+  "category": "multi_app",
+  "app": "notepad",
+  "split": "dev",
+  "difficulty": "hard",
+  "title": "Copy calculation result to Notepad",
+  "description": "Open Calculator, compute 256 + 512, copy the result, then paste it into a new Notepad file and save.",
+  "natural_language_instruction": "Open the Windows Calculator, compute 256 + 512. Copy the result. Then open Notepad, paste the result, and save the file as 'calc_result.txt' on the Desktop.",
+  "preconditions": {
+    "apps_required": ["calc.exe", "notepad.exe"],
+    "files_required": [],
+    "registry_keys": []
+  },
+  "success_criteria": [
+    {
+      "type": "file_exists",
+      "path": "%USERPROFILE%\\Desktop\\calc_result.txt"
+    },
+    {
+      "type": "file_content_matches",
+      "path": "%USERPROFILE%\\Desktop\\calc_result.txt",
+      "expected": "768"
+    }
+  ],
+  "partial_credit_criteria": [
+    { "type": "app_launched", "process": "CalculatorApp.exe", "weight": 0.15 },
+    { "type": "app_launched", "process": "notepad.exe", "weight": 0.15 },
+    { "type": "clipboard_content", "expected": "768", "weight": 0.3 }
+  ],
+  "chaos_compatibility": ["popup", "focus_steal", "delay", "resize", "uac", "notification", "scroll_hide"],
+  "max_steps": 35,
+  "timeout_seconds": 240,
+  "tags": ["multi_app", "cross_app_workflow", "clipboard", "advanced"],
+  "metadata": { "author": "benchmark_team", "created": "2025-06-15", "notes": "Multi-app workflow: Calculator → Notepad." }
+}

@@ -1,0 +1,30 @@
+{
+  "task_id": "explorer_002",
+  "version": "1.0",
+  "category": "file_manager",
+  "app": "explorer",
+  "split": "dev",
+  "difficulty": "medium",
+  "title": "Rename and move a text file",
+  "description": "Move the file 'hello.txt' from Desktop to a new folder named 'Archive' and rename it to 'archive_hello.txt'.",
+  "natural_language_instruction": "Open File Explorer, go to the Desktop, and create a new folder named 'Archive'. Move the file 'hello.txt' into the 'Archive' folder, then rename it to 'archive_hello.txt'.",
+  "preconditions": {
+    "apps_required": ["explorer.exe"],
+    "files_required": ["%USERPROFILE%\\Desktop\\hello.txt"],
+    "registry_keys": []
+  },
+  "success_criteria": [
+    {
+      "type": "file_exists",
+      "path": "%USERPROFILE%\\Desktop\\Archive\\archive_hello.txt"
+    }
+  ],
+  "partial_credit_criteria": [
+    { "type": "app_launched", "process": "explorer.exe", "weight": 0.3 }
+  ],
+  "chaos_compatibility": ["popup", "focus_steal", "delay", "resize", "notification"],
+  "max_steps": 25,
+  "timeout_seconds": 150,
+  "tags": ["single_app", "file_management", "intermediate"],
+  "metadata": { "author": "benchmark_team", "created": "2025-06-15", "notes": "Tests folder navigation, directory creation, file moving, and renaming." }
+}

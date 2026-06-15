@@ -1,0 +1,31 @@
+{
+  "task_id": "notepad_002",
+  "version": "1.0",
+  "category": "text_editor",
+  "app": "notepad",
+  "split": "dev",
+  "difficulty": "medium",
+  "title": "Find and replace text in a file",
+  "description": "Open an existing file in Notepad, use Find & Replace to change 'foo' to 'bar', then save.",
+  "natural_language_instruction": "Open the file 'test_data.txt' from the Desktop in Notepad. Use Find and Replace (Ctrl+H) to replace all occurrences of 'foo' with 'bar'. Save the file.",
+  "preconditions": {
+    "apps_required": ["notepad.exe"],
+    "files_required": ["%USERPROFILE%\\Desktop\\test_data.txt"],
+    "registry_keys": []
+  },
+  "success_criteria": [
+    {
+      "type": "file_content_matches",
+      "path": "%USERPROFILE%\\Desktop\\test_data.txt",
+      "expected": "bar"
+    }
+  ],
+  "partial_credit_criteria": [
+    { "type": "app_launched", "process": "notepad.exe", "weight": 0.2 }
+  ],
+  "chaos_compatibility": ["popup", "focus_steal", "delay", "resize", "notification"],
+  "max_steps": 30,
+  "timeout_seconds": 180,
+  "tags": ["single_app", "text_manipulation", "intermediate"],
+  "metadata": { "author": "benchmark_team", "created": "2025-06-15", "notes": "Tests Find & Replace workflow." }
+}

@@ -1,0 +1,30 @@
+{
+  "task_id": "calc_002",
+  "version": "1.0",
+  "category": "calculator",
+  "app": "calc",
+  "split": "dev",
+  "difficulty": "medium",
+  "title": "Perform scientific calculations",
+  "description": "Switch Calculator to Scientific mode, compute 2^10, and copy the result to the clipboard.",
+  "natural_language_instruction": "Open the Windows Calculator app, switch the mode to Scientific, compute 2 raised to the power of 10 (2^10), and copy the result to the clipboard using Ctrl+C.",
+  "preconditions": {
+    "apps_required": ["calc.exe"],
+    "files_required": [],
+    "registry_keys": []
+  },
+  "success_criteria": [
+    {
+      "type": "clipboard_content",
+      "expected": "1024"
+    }
+  ],
+  "partial_credit_criteria": [
+    { "type": "app_launched", "process": "CalculatorApp.exe", "weight": 0.3 }
+  ],
+  "chaos_compatibility": ["popup", "focus_steal", "delay", "resize", "notification"],
+  "max_steps": 20,
+  "timeout_seconds": 120,
+  "tags": ["single_app", "arithmetic", "scientific", "intermediate"],
+  "metadata": { "author": "benchmark_team", "created": "2025-06-15", "notes": "Tests Scientific mode toggling and exponentiation." }
+}
