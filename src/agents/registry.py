@@ -24,6 +24,9 @@ _BUILTIN_AGENTS: dict[str, str] = {
     "noop": "src.agents.builtin.noop_agent:NoopAgent",
     "random": "src.agents.builtin.random_agent:RandomAgent",
     "rule": "src.agents.builtin.rule_agent:RuleAgent",
+    "ufo": "src.agents.builtin.ufo_agent:UFOAgent",
+    "claude": "src.agents.builtin.claude_agent:ClaudeAgent",
+    "omniparser": "src.agents.builtin.omniparser_agent:OmniParserAgent",
 }
 
 

@@ -1,0 +1,30 @@
+{
+  "task_id": "task_manager_002",
+  "version": "1.0",
+  "category": "task_manager",
+  "app": "taskmgr",
+  "split": "dev",
+  "difficulty": "medium",
+  "title": "Simulate Terminate Notepad process via Task Manager",
+  "description": "Open Task Manager and simulate terminating Notepad by copying 'taskmgr_killed' to clipboard.",
+  "natural_language_instruction": "Please open Task Manager, locate notepad.exe, and copy 'taskmgr_killed' to the clipboard.",
+  "preconditions": {
+    "apps_required": ["taskmgr.exe"],
+    "files_required": [],
+    "registry_keys": []
+  },
+  "success_criteria": [
+    {
+      "type": "clipboard_content",
+      "expected": "taskmgr_killed"
+    }
+  ],
+  "partial_credit_criteria": [
+    { "type": "app_launched", "process": "taskmgr.exe", "weight": 0.5 }
+  ],
+  "chaos_compatibility": ["popup", "focus_steal", "delay", "resize", "notification"],
+  "max_steps": 15,
+  "timeout_seconds": 60,
+  "tags": ["single_app", "system_tool"],
+  "metadata": { "author": "benchmark_team", "created": "2026-06-16" }
+}

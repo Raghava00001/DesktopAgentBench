@@ -9,6 +9,8 @@ Implements the core evaluation loop:
 from __future__ import annotations
 
 import logging
+import os
+import shutil
 import time
 import uuid
 from dataclasses import dataclass, field
@@ -109,16 +111,24 @@ class Orchestrator:
         global_start = time.time()
         global_deadline = global_start + (self._config.global_timeout_minutes * 60)
 
+        globally_timed_out = False
         for task_idx, task in enumerate(tasks):
+            if globally_timed_out:
+                break
+
             logger.info(f"Task [{task_idx+1}/{len(tasks)}]: {task.task_id} — {task.title}")
 
             variants = variant_gen.generate(task)
             logger.info(f"  Generated {len(variants)} variants")
 
             for variant in variants:
+                if globally_timed_out:
+                    break
+
                 for rep in range(self._config.repetitions):
                     if time.time() > global_deadline:
                         logger.warning("Global timeout reached — stopping benchmark")
+                        globally_timed_out = True
                         break
 
                     run_id = f"{run_session_id}/{task.task_id}_{variant.variant_name}_rep{rep}"
@@ -150,6 +160,74 @@ class Orchestrator:
 
         return metrics
 
+    @staticmethod
+    def _clean_task_artifacts(task: Task) -> None:
+        """Remove files/dirs/clipboard that success criteria will check.
+
+        This prevents stale artifacts from a prior run leaking into
+        the current evaluation and inflating scores.
+        """
+        for criterion in task.success_criteria:
+            if criterion.path:
+                expanded = os.path.expandvars(criterion.path)
+                p = Path(expanded)
+                try:
+                    if p.is_file():
+                        p.unlink()
+                    elif p.is_dir():
+                        shutil.rmtree(p)
+                except OSError:
+                    pass
+            if criterion.type == "clipboard_content":
+                try:
+                    import win32clipboard
+                    win32clipboard.OpenClipboard()
+                    win32clipboard.EmptyClipboard()
+                    win32clipboard.CloseClipboard()
+                except Exception:
+                    pass
+            if criterion.type == "window_exists" and criterion.window_title == "Task Manager":
+                try:
+                    import psutil
+                    for proc in psutil.process_iter(['name']):
+                        if proc.info['name'] and proc.info['name'].lower() == 'taskmgr.exe':
+                            proc.kill()
+                except Exception:
+                    pass
+            if criterion.type == "registry_value" and criterion.registry_key:
+                try:
+                    import winreg
+                    key_path = criterion.registry_key
+                    expected = criterion.registry_value
+                    if expected == "0":
+                        reset_val = 1
+                    elif expected == "1":
+                        reset_val = 0
+                    else:
+                        reset_val = 0
+                    
+                    parts = key_path.split("\\", 1)
+                    if len(parts) >= 2:
+                        hive_map = {
+                            "HKEY_CURRENT_USER": winreg.HKEY_CURRENT_USER,
+                            "HKCU": winreg.HKEY_CURRENT_USER,
+                            "HKEY_LOCAL_MACHINE": winreg.HKEY_LOCAL_MACHINE,
+                            "HKLM": winreg.HKEY_LOCAL_MACHINE,
+                        }
+                        hive = hive_map.get(parts[0].upper())
+                        if hive is not None:
+                            subkey_parts = parts[1].rsplit("\\", 1)
+                            subkey = subkey_parts[0]
+                            value_name = subkey_parts[1] if len(subkey_parts) > 1 else ""
+                            try:
+                                with winreg.OpenKey(hive, subkey, 0, winreg.KEY_SET_VALUE) as key:
+                                    winreg.SetValueEx(key, value_name, 0, winreg.REG_DWORD, reset_val)
+                            except FileNotFoundError:
+                                with winreg.CreateKey(hive, subkey) as key:
+                                    winreg.SetValueEx(key, value_name, 0, winreg.REG_DWORD, reset_val)
+                except Exception:
+                    pass
+
     def _execute_single_run(
         self,
         ctx: RunContext,
@@ -161,23 +239,30 @@ class Orchestrator:
         recorder = Recorder(self._config.results_dir, ctx.run_id)
 
         try:
+            # --- Clean stale artifacts from prior runs ---
+            self._clean_task_artifacts(task)
+
             # --- Setup ---
             pre_state = self._process_mgr.capture_state()
 
             # Launch required app
+            launch_failed = False
             if task.preconditions.apps_required:
                 for app in task.preconditions.apps_required:
                     try:
                         self._process_mgr.launch(app, app, wait_seconds=0.2)
                     except Exception as e:
                         logger.warning(f"Failed to launch {app}: {e}")
+                        launch_failed = True
 
             # Find target window
             target_window = None
-            if task.app:
-                target_window = self._window_mgr.wait_for_window(
-                    task.app, timeout_seconds=3.0
-                )
+            if task.app and not launch_failed:
+                target_window = self._window_mgr.find_app_window(title_hint=task.app)
+                if not target_window and task.preconditions.apps_required:
+                    target_window = self._window_mgr.wait_for_window(
+                        task.app, timeout_seconds=3.0
+                    )
 
             # Configure chaos
             self._chaos.configure(
@@ -297,7 +382,7 @@ class Orchestrator:
         finally:
             # Cleanup launched processes
             for app in task.preconditions.apps_required:
-                self._process_mgr.terminate(app, timeout=3.0)
+                self._process_mgr.terminate(app, timeout=0.2)
 
     def _load_agent(self) -> AgentAdapter:
         """Load the configured agent."""

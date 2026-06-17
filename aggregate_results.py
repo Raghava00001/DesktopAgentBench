@@ -27,7 +27,7 @@ def load_task_categories(tasks_dir: Path) -> dict[str, str]:
     return mapping
 
 def find_latest_sessions(results_dir: Path) -> dict[str, Path]:
-    """Find the latest session directory for each agent."""
+    """Find the latest session directory for each agent that has total_tasks == 30."""
     agent_sessions: dict[str, tuple[float, Path]] = {}
     
     if not results_dir.exists():
@@ -42,6 +42,10 @@ def find_latest_sessions(results_dir: Path) -> dict[str, Path]:
                         data = json.load(f)
                         agent = data.get("agent_name")
                         if agent:
+                            total_tasks = data.get("total_tasks", 0)
+                            if total_tasks != 30:
+                                print(f"SKIPPED: {agent} session {p} has {total_tasks} tasks, expected 30")
+                                continue
                             mtime = metrics_path.stat().st_mtime
                             if agent not in agent_sessions or mtime > agent_sessions[agent][0]:
                                 agent_sessions[agent] = (mtime, p)
@@ -62,9 +66,11 @@ def main():
     sessions = find_latest_sessions(results_dir)
     print(f"Discovered latest sessions: {list(sessions.keys())}")
     
-    if not sessions:
-        print("Error: No agent session data found in results/.")
-        sys.exit(1)
+    expected_agents = ["noop", "random", "rule", "claude", "omniparser", "ufo"]
+    for agent in expected_agents:
+        if agent not in sessions:
+            print(f"ERROR: No valid 30-task session found for agent: {agent}")
+            sys.exit(1)
         
     # Load session metrics
     metrics: dict[str, dict] = {}
@@ -116,8 +122,8 @@ def main():
         chaos_table.append("| " + " | ".join(row) + " |")
         
     # 3. PER-CATEGORY BREAKDOWN TABLE
-    # Determine all unique categories
-    categories = sorted(list(set(task_categories.values())))
+    # Determine all unique categories dynamically
+    categories = sorted(set(task_categories.values()))
     cat_headers = ["Agent"] + [f"{cat.replace('_', ' ').title()} TSR" for cat in categories]
     cat_table = [
         "| " + " | ".join(cat_headers) + " |",
@@ -148,54 +154,66 @@ def main():
     hypothesis_results = []
     
     # H1: Combined chaos causes the largest degradation
-    # Check if moderate/severe TSR is lower than all isolated TSRs for the rule agent
-    rule_tsr = metrics.get("rule", {}).get("tsr", {})
-    rule_per_var = rule_tsr.get("per_variant", {})
-    if rule_per_var:
-        clean_tsr = rule_per_var.get("clean", 0.0)
-        isolated_tsrs = [rule_per_var[v] for v in rule_per_var if v not in ("clean", "moderate", "severe")]
-        combined_tsr = rule_per_var.get("moderate", 0.0)
+    # Check if moderate/severe TSR is lower than all isolated TSRs for the UFO agent
+    ufo_tsr = metrics.get("ufo", {}).get("tsr", {})
+    ufo_per_var = ufo_tsr.get("per_variant", {})
+    if ufo_per_var:
+        clean_tsr = ufo_per_var.get("clean", 0.0)
+        isolated_tsrs = [ufo_per_var[v] for v in ufo_per_var if v not in ("clean", "moderate", "severe")]
+        combined_tsr = ufo_per_var.get("moderate", 0.0)
         
         is_h1_supported = False
         if isolated_tsrs:
+            # Combined chaos is not the largest if UAC is 0.0 which is lower than moderate TSR
             is_h1_supported = combined_tsr < min(isolated_tsrs) and combined_tsr < clean_tsr
             
         h1_status = "SUPPORTED" if is_h1_supported else "NOT SUPPORTED"
         hypothesis_results.append(
             f"**H1: Combined chaos causes the largest degradation** — **{h1_status}**\n"
-            f"  - Clean Baseline TSR: {clean_tsr:.4f}\n"
-            f"  - Isolated Chaos TSRs (Min/Max): {min(isolated_tsrs) if isolated_tsrs else 0.0:.4f}/{max(isolated_tsrs) if isolated_tsrs else 0.0:.4f}\n"
-            f"  - Combined Chaos (Moderate) TSR: {combined_tsr:.4f}"
+            f"  - UFO Clean Baseline TSR: {clean_tsr:.4f}\n"
+            f"  - UFO Isolated Chaos TSRs (Min/Max): {min(isolated_tsrs) if isolated_tsrs else 0.0:.4f}/{max(isolated_tsrs) if isolated_tsrs else 0.0:.4f}\n"
+            f"  - UFO Combined Chaos (Moderate) TSR: {combined_tsr:.4f}"
         )
     else:
         hypothesis_results.append("**H1: Combined chaos causes the largest degradation** — **INSUFFICIENT DATA**")
         
     # H2: Focus-aware agents recover better than naive agents
-    # Compare Rule (focus-aware) RR vs Noop/Random (naive) RR
+    # Compare Focus-aware (rule, ufo) RR vs Naive (noop, random, claude, omniparser) RR
+    ufo_rr = metrics.get("ufo", {}).get("rr", {}).get("value", 0.0)
     rule_rr = metrics.get("rule", {}).get("rr", {}).get("value", 0.0)
     noop_rr = metrics.get("noop", {}).get("rr", {}).get("value", 0.0)
     random_rr = metrics.get("random", {}).get("rr", {}).get("value", 0.0)
+    claude_rr = metrics.get("claude", {}).get("rr", {}).get("value", 0.0)
+    omniparser_rr = metrics.get("omniparser", {}).get("rr", {}).get("value", 0.0)
     
-    is_h2_supported = rule_rr > max(noop_rr, random_rr)
+    focus_aware_max = max(ufo_rr, rule_rr)
+    naive_max = max(noop_rr, random_rr, claude_rr, omniparser_rr)
+    is_h2_supported = focus_aware_max > naive_max
     h2_status = "SUPPORTED" if is_h2_supported else "NOT SUPPORTED"
     hypothesis_results.append(
         f"**H2: Focus-aware agents recover better than naive agents** — **{h2_status}**\n"
+        f"  - UFO Agent (Focus-Aware) Recovery Rate: {ufo_rr:.4f}\n"
         f"  - Rule Agent (Focus-Aware) Recovery Rate: {rule_rr:.4f}\n"
-        f"  - Noop Agent Recovery Rate: {noop_rr:.4f}\n"
-        f"  - Random Agent Recovery Rate: {random_rr:.4f}"
+        f"  - Claude Computer Use (Naive) Recovery Rate: {claude_rr:.4f}\n"
+        f"  - OmniParser Agent (Naive) Recovery Rate: {omniparser_rr:.4f}"
     )
     
     # H3: Random agents create more latent harm than structured agents
-    # Compare Random LHDI vs Noop & Rule LHDI
-    rule_lhdi = metrics.get("rule", {}).get("lhdi", {}).get("value", 0.0)
-    noop_lhdi = metrics.get("noop", {}).get("lhdi", {}).get("value", 0.0)
+    # Compare Random LHDI vs Structured Focus-Naive (claude, omniparser, rule) LHDI
     random_lhdi = metrics.get("random", {}).get("lhdi", {}).get("value", 0.0)
+    rule_lhdi = metrics.get("rule", {}).get("lhdi", {}).get("value", 0.0)
+    claude_lhdi = metrics.get("claude", {}).get("lhdi", {}).get("value", 0.0)
+    omniparser_lhdi = metrics.get("omniparser", {}).get("lhdi", {}).get("value", 0.0)
+    noop_lhdi = metrics.get("noop", {}).get("lhdi", {}).get("value", 0.0)
     
-    is_h3_supported = random_lhdi > max(noop_lhdi, rule_lhdi)
+    structured_max = max(rule_lhdi, claude_lhdi, omniparser_lhdi)
+    is_h3_supported = random_lhdi > structured_max
     h3_status = "SUPPORTED" if is_h3_supported else "NOT SUPPORTED"
     hypothesis_results.append(
         f"**H3: Random agents create more latent harm than structured agents** — **{h3_status}**\n"
         f"  - Random Agent Latent Harm Index: {random_lhdi:.4f}\n"
+        f"  - Claude Computer Use Latent Harm Index: {claude_lhdi:.4f}\n"
+        f"  - OmniParser Agent Latent Harm Index: {omniparser_lhdi:.4f}\n"
         f"  - Rule Agent Latent Harm Index: {rule_lhdi:.4f}\n"
         f"  - Noop Agent Latent Harm Index: {noop_lhdi:.4f}"
     )
@@ -211,6 +229,8 @@ def main():
         "The following table compares the 7 core metrics computed across all runs in the matrix evaluation.",
         ""
     ] + overall_table + [
+        "",
+        "Note: The Rule Agent is a Task-Specialized Baseline: Calculator only. It is configured with hardcoded task sequences for calculator and basic notepad tasks, failing to generalize to the rest of the corpus.",
         "",
         "## 2. Disruption Profile Breakdown (TSR)",
         "",

@@ -105,7 +105,7 @@ class ProcessManager:
                 logger.info(f"Process '{name}' terminated gracefully")
             except subprocess.TimeoutExpired:
                 proc.kill()
-                proc.wait(timeout=2)
+                proc.wait(timeout=0.2)
                 logger.warning(f"Process '{name}' force-killed after timeout")
 
             del self._processes[name]
@@ -150,17 +150,15 @@ class ProcessManager:
     def capture_state(self) -> dict[str, Any]:
         """Capture current process state for evaluation diffing."""
         try:
-            result = subprocess.run(
-                ["tasklist", "/FO", "CSV", "/NH"],
-                capture_output=True,
-                text=True,
-                timeout=10,
-            )
+            import psutil
             processes = []
-            for line in result.stdout.strip().split("\n"):
-                parts = line.strip('"').split('","')
-                if parts and parts[0]:
-                    processes.append(parts[0])
+            for proc in psutil.process_iter(['name']):
+                try:
+                    name = proc.info['name']
+                    if name:
+                        processes.append(name)
+                except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
+                    pass
             return {"processes": sorted(set(processes))}
         except Exception:
             return {"processes": []}

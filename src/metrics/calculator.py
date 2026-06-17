@@ -14,7 +14,7 @@ Computes all 7 benchmark metrics:
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import Any
+from typing import Any, Callable
 
 from src.core.evaluator import TaskResult
 from src.metrics.statistics import compute_statistics, StatsSummary
@@ -264,7 +264,7 @@ class MetricCalculator:
         for r in results:
             if r.elapsed_seconds > 0:
                 # Use max_steps as complexity proxy (from task schema)
-                complexity = 20  # default; overridden if task ref available
+                complexity = r.task_max_steps
                 throughput = (r.meaningful_step_count / r.elapsed_seconds) * (1.0 / complexity)
                 total += throughput
                 valid_count += 1
@@ -285,7 +285,7 @@ class MetricCalculator:
     @staticmethod
     def _per_task_metric(
         results: list[TaskResult],
-        metric_fn: callable,
+        metric_fn: Callable[[list[TaskResult]], float],
     ) -> list[float]:
         """Compute a metric per-task and return the list of values."""
         task_ids = set(r.task_id for r in results)

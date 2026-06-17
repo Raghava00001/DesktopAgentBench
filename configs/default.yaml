@@ -7,6 +7,7 @@ confidence_level: 0.95
 chaos_profiles:
   - clean
   - moderate
+  - severe
 
 generate_isolated_variants: true
 

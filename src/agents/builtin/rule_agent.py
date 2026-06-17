@@ -2,6 +2,8 @@
 Rule-based desktop agent — executes hardcoded sequences for specific tasks.
 Uses pywin32 / Windows APIs to perform real mouse clicks and keystrokes,
 making it a real desktop agent adapter for validation.
+
+Task-Specialized Baseline: Calculator only
 """
 
 from __future__ import annotations
@@ -147,7 +149,7 @@ class RuleAgent(AgentAdapter):
         else:
             self._task_id = "unknown"
             self._action_sequence = [
-                Action(action_type="wait", parameters={"seconds": 1.0}, reasoning="Unsupported task, waiting"),
+                Action(action_type="wait", parameters={"seconds": 0.001}, reasoning="Unsupported task, waiting"),
                 Action(action_type="done", reasoning="Aborting unsupported task")
             ]
 

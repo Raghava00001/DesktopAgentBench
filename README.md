@@ -4,6 +4,8 @@
 
 DesktopAgentBench evaluates the production readiness of desktop automation agents by testing them under realistic but safe adversarial conditions. It doesn't build an agent — it stress-tests yours.
 
+> **v1.0** — 30 tasks across 8 categories, 7 chaos modules, 7 metrics, 6 baseline agents.
+
 ## Key Features
 
 - **🎯 Agent-Agnostic** — Plug in any agent by implementing the `AgentAdapter` interface
@@ -29,6 +31,9 @@ python bench.py run --agent builtin:noop --config configs/default.yaml
 
 # Run with a specific task and chaos profile
 python bench.py run --agent builtin:random --tasks notepad_001 --profile moderate -n 3
+
+# Regenerate reports from existing results
+python bench.py report results/
 ```
 
 ## Integrating Your Agent
@@ -77,9 +82,10 @@ See [docs/METRICS.md](docs/METRICS.md) for formulas and computation details.
 │   ├── agents/                 # Agent adapter ABC & builtins
 │   ├── metrics/                # Calculator, statistics, reporter
 │   └── platform/               # Win32 utilities
-├── tasks/                      # Task corpus (JSON)
+├── tasks/                      # Task corpus (30 tasks, JSON)
 │   ├── dev/                    # Public development split
 │   └── held_out/               # Private held-out split
+├── scripts/                    # Experiment scripts
 ├── results/                    # Benchmark outputs
 └── docs/                       # Documentation
 ```

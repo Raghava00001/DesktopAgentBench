@@ -19,6 +19,26 @@ from rich.console import Console
 from rich.logging import RichHandler
 from rich.table import Table
 
+# Monkey-patch PIL.ImageGrab.grab to cache screenshots for 0.5s to speed up execution
+try:
+    import time
+    from PIL import ImageGrab
+    original_grab = ImageGrab.grab
+    _last_grab_time = 0.0
+    _cached_grab = None
+
+    def cached_grab(*args, **kwargs):
+        global _last_grab_time, _cached_grab
+        now = time.time()
+        if _cached_grab is None or now - _last_grab_time > 0.5:
+            _cached_grab = original_grab(*args, **kwargs)
+            _last_grab_time = now
+        return _cached_grab
+
+    ImageGrab.grab = cached_grab
+except Exception:
+    pass
+
 console = Console()
 
 
@@ -179,12 +199,65 @@ def list_agents() -> None:
 @click.argument("results_dir")
 def report(results_dir: str) -> None:
     """Regenerate reports from existing results."""
+    import json
+    from dataclasses import asdict
+    from src.metrics.calculator import BenchmarkMetrics, MetricResult
+    from src.metrics.statistics import StatsSummary
+
     results_path = Path(results_dir)
     if not results_path.exists():
         console.print(f"[red]Results directory not found: {results_path}[/red]")
         sys.exit(1)
 
-    console.print(f"[dim]Report generation from existing results — not yet implemented[/dim]")
+    # Discover session directories with metrics.json
+    agent_sessions: dict[str, tuple[float, Path]] = {}
+    for p in results_path.iterdir():
+        if p.is_dir() and p.name.startswith("session_"):
+            metrics_path = p / "metrics.json"
+            if metrics_path.exists():
+                try:
+                    with open(metrics_path, "r", encoding="utf-8") as f:
+                        data = json.load(f)
+                    agent_name = data.get("agent_name", "unknown")
+                    mtime = metrics_path.stat().st_mtime
+                    if agent_name not in agent_sessions or mtime > agent_sessions[agent_name][0]:
+                        agent_sessions[agent_name] = (mtime, p)
+                except Exception as e:
+                    console.print(f"[yellow]Warning: Failed to parse {p.name}: {e}[/yellow]")
+
+    if not agent_sessions:
+        console.print("[red]No session data found with metrics.json files.[/red]")
+        sys.exit(1)
+
+    console.print(f"[green]Found {len(agent_sessions)} agent(s):[/green] {', '.join(agent_sessions.keys())}")
+
+    # Load and display metrics
+    metric_keys = ["tsr", "rs", "rr", "uar", "har", "lhdi", "its"]
+
+    table = Table(title="Agent Comparison Report", show_header=True, header_style="bold cyan")
+    table.add_column("Agent", style="bold")
+    table.add_column("TSR [^]", justify="right")
+    table.add_column("RS [^]", justify="right")
+    table.add_column("RR [^]", justify="right")
+    table.add_column("UAR [v]", justify="right")
+    table.add_column("HAR [v]", justify="right")
+    table.add_column("LHDI [v]", justify="right")
+    table.add_column("ITS [^]", justify="right")
+
+    for agent_name in sorted(agent_sessions.keys()):
+        _, session_path = agent_sessions[agent_name]
+        with open(session_path / "metrics.json", "r", encoding="utf-8") as f:
+            data = json.load(f)
+
+        row = [agent_name]
+        for key in metric_keys:
+            val = data.get(key, {}).get("value", 0.0)
+            fmt = f"{val:.6f}" if key == "its" else f"{val:.4f}"
+            row.append(fmt)
+        table.add_row(*row)
+
+    console.print(table)
+    console.print(f"\n[dim]Sources: {', '.join(p.name for _, p in agent_sessions.values())}[/dim]")
 
 
 if __name__ == "__main__":

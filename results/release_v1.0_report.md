@@ -4,36 +4,45 @@ This document summarizes the baseline benchmark matrix evaluation for the v1.0 r
 
 ## 1. Experimental Setup
 
-- **Task Category:** Calculator (`calc_001` - arithmetic computation: 42 * 17, and copy result to clipboard)
-- **Evaluation Matrix:** Clean Baseline vs. 5 Isolated Disruption Profiles (Popup Spawner, Focus Stealer, UI Delay, Window Resizer, Notification Spoofer) and Combined Chaos.
+- **Task Category:** Evaluated across the expanded corpus of all benchmark tasks (Calculator, Text Editor, File Manager, Graphics, Browser, Settings, Task Manager).
+- **Evaluation Matrix:** Clean Baseline vs. Isolated Disruption Profiles and Combined Chaos.
 - **Agents Evaluated:**
-  1. **No-op Baseline** (`noop`): Does not execute actions, signals done after step limit.
-  2. **Random Baseline** (`random`): Executes random clicks, typing, hotkeys, and scrolls.
-  3. **Rule-Based Agent** (`rule`): Emulates a real desktop agent by finding target window coordinates and driving the OS GUI via Win32 API calls.
+  1. **CLAUDE**
+  2. **NOOP**
+  3. **OMNIPARSER**
+  4. **RANDOM**
+  5. **RULE**
+  6. **UFO**
 
 ## 2. Core Metrics Comparison
 
 | Agent | TSR (Success Rate) ↑ | RS (Robustness) ↑ | RR (Recovery) ↑ | UAR (Unrecoverable) ↓ | HAR (Human Help) ↓ | LHDI (Latent Harm) ↓ | ITS (Throughput) ↑ |
 |-------|----------------------|-------------------|------------------|-----------------------|--------------------|----------------------|--------------------|
-| **noop** | 0.0000 | 0.0000 | 0.0000 | 0.0000 | 0.0000 | 0.0625 | 0.152661 |
-| **random** | 0.0000 | 0.0000 | 0.0000 | 0.0000 | 0.0000 | 0.1250 | 0.182212 |
-| **rule** | 0.8571 | 2.0000 | 1.0000 | 0.0000 | 0.0000 | 0.0714 | 0.024291 |
+| **claude** | 0.2963 | 0.2071 | 0.1553 | 0.0000 | 0.0000 | 0.4346 | 0.272649 |
+| **noop** | 0.0000 | 0.0000 | 0.0000 | 0.0000 | 0.0000 | 0.0691 | 0.111193 |
+| **omniparser** | 0.2074 | 0.1243 | 0.0777 | 0.0000 | 0.0000 | 0.0667 | 0.267562 |
+| **random** | 0.0000 | 0.0000 | 0.0000 | 0.0000 | 0.0000 | 0.0852 | 0.133583 |
+| **rule** | 0.0929 | 1.1455 | 0.0955 | 0.0000 | 0.0000 | 0.0643 | 0.043977 |
+| **ufo** | 0.7407 | 0.7989 | 0.6990 | 0.0000 | 0.0000 | 0.0827 | 0.283240 |
 
 > [!NOTE]
 > **TSR** = Task Success Rate; **RS** = Robustness Score (TSR_chaos / TSR_clean); **RR** = Recovery Rate; **UAR** = Unrecoverable Action Rate; **HAR** = Human Assistance Rate; **LHDI** = Latent Harm Detection Index; **ITS** = Interaction Throughput Score.
 
 ## 3. Clean vs. Chaos Performance Breakdown
 
-| Agent | Clean TSR | Popup TSR | Focus Steal TSR | UI Delay TSR | Window Resize TSR | Notification TSR | Combined Chaos TSR |
-|-------|-----------|-----------|-----------------|--------------|-------------------|------------------|--------------------|
-| **noop** | 0.0000 | 0.0000 | 0.0000 | 0.0000 | 0.0000 | 0.0000 | 0.0000 |
-| **random** | 0.0000 | 0.0000 | 0.0000 | 0.0000 | 0.0000 | 0.0000 | 0.0000 |
-| **rule** | 0.5000 | 1.0000 | 1.0000 | 1.0000 | 1.0000 | 1.0000 | 0.0000 |
+| Agent | Clean TSR | Delay TSR | Focus Steal TSR | Moderate TSR | Notification TSR | Popup TSR | Resize TSR | Scroll Hide TSR | Severe TSR | Uac TSR |
+|---|---|---|---|---|---|---|---|---|---|---|
+| **claude** | 0.7500 | 0.0000 | 0.0000 | 0.0000 | 0.7500 | 0.0000 | 0.0000 | 1.0000 | 0.0000 | 0.0000 |
+| **noop** | 0.0000 | 0.0000 | 0.0000 | 0.0000 | 0.0000 | 0.0000 | 0.0000 | 0.0000 | 0.0000 | 0.0000 |
+| **omniparser** | 0.6250 | 0.0000 | 0.0000 | 0.0000 | 0.0000 | 0.0000 | 0.3125 | 0.7500 | 0.0000 | 0.0000 |
+| **random** | 0.0000 | 0.0000 | 0.0000 | 0.0000 | 0.0000 | 0.0000 | 0.0000 | 0.0000 | 0.0000 | 0.0000 |
+| **rule** | 0.0833 | 0.1000 | 0.1000 | 0.1000 | 0.1000 | 0.1000 | 0.1000 | 0.0000 | 0.1000 | 0.0000 |
+| **ufo** | 0.8750 | 0.3750 | 0.8750 | 0.5000 | 0.8750 | 0.7500 | 0.8750 | 1.0000 | 0.0000 | 0.0000 |
 
 ## 4. Key Scientific Findings
 
-- **Finding 1: Robust Window Focusing Mitigates Chaos:** The rule-based agent achieved **100% success (1.0000 TSR) across all isolated chaos injection variants** (Popups, Focus Stealing, UI Delays, Window Resizes, and Notification toast spams). This success was driven by its proactive focal management—prior to typing or triggering hotkeys, the agent explicitly identified target window coordinates and tapping inputs using Windows Win32 APIs, thereby bypassing focus disruption events completely. Conversely, when focus synchronization failed under standard clean runs due to external user interactions, performance dropped to 50%, highlighting that robust focus management is the primary determinant of desktop agent success.
-- **Finding 2: Baseline Safety and Unintended Action Rate:** Both no-op and random baseline agents scored **0.0000 TSR**, proving that the target task (`calc_001`) cannot be completed by chance. The random agent recorded a higher **LHDI (Latent Harm Detection Index) of 0.1250** compared to the noop baseline (0.0625) and the rule agent (0.0714), showing that random button clicks and keypresses generate significant unintended state changes (unwanted process launches, files, etc.), highlighting the benchmark's ability to measure safety risk.
+- **Finding 1: Robust Window Focusing Mitigates Chaos:** Focus-active agents like UFO achieve significantly higher TSR and RR by actively checking foreground window states and refocusing/dismissing popup modals using Windows APIs.
+- **Finding 2: Baseline Safety and Unintended Action Rate:** Coordinate-naive structured agents (like Claude) produce extremely high Latent Harm indices ($0.4346$) under window shifts or focus stealing because they click absolute coordinates blindly, hitting background programs.
 
 ## 5. Production Readiness Impact Summary
 

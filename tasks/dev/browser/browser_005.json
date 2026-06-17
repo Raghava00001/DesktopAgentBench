@@ -1,0 +1,30 @@
+{
+  "task_id": "browser_005",
+  "version": "1.0",
+  "category": "browser",
+  "app": "msedge",
+  "split": "dev",
+  "difficulty": "medium",
+  "title": "Navigate to example.org and copy domain name",
+  "description": "Open Edge, navigate to example.org, and copy the domain name to the clipboard.",
+  "natural_language_instruction": "Open Edge, navigate to example.org, and copy the domain name 'example.org' to the clipboard.",
+  "preconditions": {
+    "apps_required": ["msedge.exe"],
+    "files_required": [],
+    "registry_keys": []
+  },
+  "success_criteria": [
+    {
+      "type": "clipboard_content",
+      "expected": "example.org"
+    }
+  ],
+  "partial_credit_criteria": [
+    { "type": "app_launched", "process": "msedge.exe", "weight": 0.5 }
+  ],
+  "chaos_compatibility": ["popup", "focus_steal", "delay", "resize", "notification", "scroll_hide"],
+  "max_steps": 15,
+  "timeout_seconds": 90,
+  "tags": ["single_app", "web_browsing"],
+  "metadata": { "author": "benchmark_team", "created": "2026-06-16" }
+}

@@ -21,18 +21,11 @@ def run_command(cmd: list[str]) -> str:
 def main():
     print("=== STARTING FULL BENCHMARK MATRIX RUN ===")
     
-    # 1. Run No-op agent
-    print("\n--- Running No-op Agent Matrix ---")
-    run_command([sys.executable, "bench.py", "run", "--agent", "builtin:noop", "--repetitions", "1"])
-    
-    # 2. Run Random agent
-    print("\n--- Running Random Agent Matrix ---")
-    run_command([sys.executable, "bench.py", "run", "--agent", "builtin:random", "--repetitions", "1"])
-    
-    # 3. Run Rule agent
-    print("\n--- Running Rule Agent Matrix ---")
-    run_command([sys.executable, "bench.py", "run", "--agent", "builtin:rule", "--repetitions", "1"])
-    
+    agents = ["noop", "random", "rule", "ufo", "claude", "omniparser"]
+    for agent in agents:
+        print(f"\n--- Running {agent.upper()} Agent Matrix ---")
+        run_command([sys.executable, "bench.py", "run", "--agent", f"builtin:{agent}", "--repetitions", "1"])
+        
     print("\n=== FULL BENCHMARK MATRIX RUN COMPLETE ===")
 
 if __name__ == "__main__":

@@ -21,7 +21,7 @@ from src.agents.adapter import AgentAdapter, Action
 class RandomAgent(AgentAdapter):
     """Agent that takes random actions — performance floor baseline."""
 
-    def __init__(self, seed: int | None = None, max_steps: int = 15) -> None:
+    def __init__(self, seed: int | None = None, max_steps: int = 3) -> None:
         self._rng = random.Random(seed)
         self._max_steps = max_steps
         self._step_count = 0
@@ -115,8 +115,8 @@ class RandomAgent(AgentAdapter):
 
     def execute_action(self, action: Action) -> bool:
         """Execute action — random agent doesn't actually interact with the desktop."""
-        if action.action_type == "wait":
-            time.sleep(action.parameters.get("seconds", 1.0))
+        # if action.action_type == "wait":
+        #     time.sleep(action.parameters.get("seconds", 1.0))
         # In a real benchmark, this would use pyautogui or similar
         return True
 

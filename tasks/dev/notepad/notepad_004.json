@@ -1,0 +1,35 @@
+{
+  "task_id": "notepad_004",
+  "version": "1.0",
+  "category": "text_editor",
+  "app": "notepad",
+  "split": "dev",
+  "difficulty": "easy",
+  "title": "Create notepad_4 text file",
+  "description": "Write 'Notepad 4' and save as 'notepad_4.txt' on Desktop.",
+  "natural_language_instruction": "Write 'Notepad 4' and save as 'notepad_4.txt' on Desktop.",
+  "preconditions": {
+    "apps_required": ["notepad.exe"],
+    "files_required": [],
+    "registry_keys": []
+  },
+  "success_criteria": [
+    {
+      "type": "file_exists",
+      "path": "%USERPROFILE%\\Desktop\\notepad_4.txt"
+    },
+    {
+      "type": "file_content_matches",
+      "path": "%USERPROFILE%\\Desktop\\notepad_4.txt",
+      "expected": "Notepad 4"
+    }
+  ],
+  "partial_credit_criteria": [
+    { "type": "app_launched", "process": "notepad.exe", "weight": 0.5 }
+  ],
+  "chaos_compatibility": ["popup", "focus_steal", "delay", "resize", "notification"],
+  "max_steps": 15,
+  "timeout_seconds": 60,
+  "tags": ["single_app", "text_editing"],
+  "metadata": { "author": "benchmark_team", "created": "2026-06-16" }
+}

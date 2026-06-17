@@ -1,0 +1,31 @@
+{
+  "task_id": "settings_003",
+  "version": "1.0",
+  "category": "settings",
+  "app": "settings",
+  "split": "dev",
+  "difficulty": "medium",
+  "title": "Disable Taskbar Animations",
+  "description": "Disable taskbar animations in Windows advanced settings.",
+  "natural_language_instruction": "Open Settings, and ensure that the registry key HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced\\TaskbarAnimations is set to 0.",
+  "preconditions": {
+    "apps_required": [],
+    "files_required": [],
+    "registry_keys": []
+  },
+  "success_criteria": [
+    {
+      "type": "registry_value",
+      "registry_key": "HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced\\TaskbarAnimations",
+      "registry_value": "0"
+    }
+  ],
+  "partial_credit_criteria": [
+    { "type": "app_launched", "process": "explorer.exe", "weight": 0.5 }
+  ],
+  "chaos_compatibility": ["popup", "focus_steal", "delay", "resize", "notification"],
+  "max_steps": 15,
+  "timeout_seconds": 90,
+  "tags": ["single_app", "settings"],
+  "metadata": { "author": "benchmark_team", "created": "2026-06-16" }
+}

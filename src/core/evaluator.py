@@ -63,6 +63,9 @@ class TaskResult:
     agent_signaled_done: bool = False
     agent_error: str | None = None
 
+    # Task metadata for metric computation
+    task_max_steps: int = 20
+
 
 # ---------------------------------------------------------------------------
 # Criterion checkers
@@ -168,6 +171,51 @@ def check_clipboard_content(criterion: SuccessCriterion) -> bool:
         return False
 
 
+def check_text_typed(criterion: SuccessCriterion) -> bool:
+    """Stub: text_typed requires UI state access — not yet implemented."""
+    import logging
+    logging.getLogger(__name__).warning(
+        "Criterion type 'text_typed' is not yet implemented — returning False"
+    )
+    return False
+
+
+def check_registry_value(criterion: SuccessCriterion) -> bool:
+    """Check a Windows registry value."""
+    try:
+        import winreg
+        key_path = criterion.registry_key or ""
+        expected = criterion.registry_value or ""
+        if not key_path:
+            return False
+
+        # Split into hive and subkey
+        parts = key_path.split("\\", 1)
+        if len(parts) < 2:
+            return False
+
+        hive_map = {
+            "HKEY_CURRENT_USER": winreg.HKEY_CURRENT_USER,
+            "HKCU": winreg.HKEY_CURRENT_USER,
+            "HKEY_LOCAL_MACHINE": winreg.HKEY_LOCAL_MACHINE,
+            "HKLM": winreg.HKEY_LOCAL_MACHINE,
+        }
+        hive = hive_map.get(parts[0].upper())
+        if hive is None:
+            return False
+
+        # The subkey may include the value name after the last backslash
+        subkey_parts = parts[1].rsplit("\\", 1)
+        subkey = subkey_parts[0]
+        value_name = subkey_parts[1] if len(subkey_parts) > 1 else ""
+
+        with winreg.OpenKey(hive, subkey) as key:
+            value, _ = winreg.QueryValueEx(key, value_name)
+            return str(value) == expected
+    except Exception:
+        return False
+
+
 # Registry of criterion checkers
 CRITERION_CHECKERS: dict[str, Any] = {
     "file_exists": check_file_exists,
@@ -176,6 +224,8 @@ CRITERION_CHECKERS: dict[str, Any] = {
     "app_launched": check_app_launched,
     "window_exists": check_window_exists,
     "clipboard_content": check_clipboard_content,
+    "text_typed": check_text_typed,
+    "registry_value": check_registry_value,
 }
 
 
@@ -281,6 +331,7 @@ class Evaluator:
             run_id=run_id,
             agent_name=agent_name,
             agent_signaled_done=agent_signaled_done,
+            task_max_steps=task.max_steps,
         )
 
         # --- Check success criteria ---

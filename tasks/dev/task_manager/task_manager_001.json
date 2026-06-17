@@ -1,0 +1,30 @@
+{
+  "task_id": "task_manager_001",
+  "version": "1.0",
+  "category": "task_manager",
+  "app": "taskmgr",
+  "split": "dev",
+  "difficulty": "medium",
+  "title": "Open Task Manager Window",
+  "description": "Open Task Manager and ensure its window is visible.",
+  "natural_language_instruction": "Please launch Task Manager (taskmgr.exe) and verify that the Task Manager window is open.",
+  "preconditions": {
+    "apps_required": [],
+    "files_required": [],
+    "registry_keys": []
+  },
+  "success_criteria": [
+    {
+      "type": "window_exists",
+      "window_title": "Task Manager"
+    }
+  ],
+  "partial_credit_criteria": [
+    { "type": "app_launched", "process": "taskmgr.exe", "weight": 1.0 }
+  ],
+  "chaos_compatibility": ["popup", "focus_steal", "delay", "resize", "notification"],
+  "max_steps": 10,
+  "timeout_seconds": 60,
+  "tags": ["single_app", "system_tool"],
+  "metadata": { "author": "benchmark_team", "created": "2026-06-16" }
+}

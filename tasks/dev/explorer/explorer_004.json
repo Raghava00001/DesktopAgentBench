@@ -1,0 +1,30 @@
+{
+  "task_id": "explorer_004",
+  "version": "1.0",
+  "category": "file_manager",
+  "app": "explorer",
+  "split": "dev",
+  "difficulty": "easy",
+  "title": "Create folder explorer_4",
+  "description": "Create a folder named 'DAB_Explorer_4' on the Desktop.",
+  "natural_language_instruction": "Create a folder named 'DAB_Explorer_4' on the Desktop.",
+  "preconditions": {
+    "apps_required": ["explorer.exe"],
+    "files_required": [],
+    "registry_keys": []
+  },
+  "success_criteria": [
+    {
+      "type": "file_exists",
+      "path": "%USERPROFILE%\\Desktop\\DAB_Explorer_4"
+    }
+  ],
+  "partial_credit_criteria": [
+    { "type": "app_launched", "process": "explorer.exe", "weight": 1.0 }
+  ],
+  "chaos_compatibility": ["popup", "focus_steal", "delay", "resize", "notification"],
+  "max_steps": 10,
+  "timeout_seconds": 60,
+  "tags": ["single_app", "file_io"],
+  "metadata": { "author": "benchmark_team", "created": "2026-06-16" }
+}

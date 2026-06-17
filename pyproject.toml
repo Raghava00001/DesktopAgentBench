@@ -1,10 +1,10 @@
 [build-system]
 requires = ["setuptools>=68.0", "wheel"]
-build-backend = "setuptools.backends._legacy:_Backend"
+build-backend = "setuptools.build_meta"
 
 [project]
 name = "desktop-agent-bench"
-version = "0.1.0"
+version = "1.0.0"
 description = "Windows-only, agent-agnostic reliability benchmark for desktop agents with chaos injection"
 readme = "README.md"
 requires-python = ">=3.11"
@@ -37,6 +37,9 @@ dab = "bench:cli"
 noop = "src.agents.builtin.noop_agent:NoopAgent"
 random = "src.agents.builtin.random_agent:RandomAgent"
 rule = "src.agents.builtin.rule_agent:RuleAgent"
+ufo = "src.agents.builtin.ufo_agent:UFOAgent"
+claude = "src.agents.builtin.claude_agent:ClaudeAgent"
+omniparser = "src.agents.builtin.omniparser_agent:OmniParserAgent"
 
 [tool.setuptools.packages.find]
 where = ["."]

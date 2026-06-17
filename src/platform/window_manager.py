@@ -11,6 +11,7 @@ import logging
 import time
 from typing import Any
 
+# pyrefly: ignore [missing-import]
 from src.platform.win32_utils import (
     WindowInfo,
     find_windows_by_title,
@@ -100,6 +101,7 @@ class WindowManager:
         """Return info for all visible top-level windows."""
         results: list[WindowInfo] = []
 
+        # pyrefly: ignore [missing-import]
         from src.platform.win32_utils import enum_windows, get_window_class, get_window_process_id
 
         def _collect(hwnd: int) -> bool:

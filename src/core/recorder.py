@@ -108,13 +108,21 @@ class Recorder:
         now = time.time()
         elapsed = now - self._start_time
 
-        # Save screenshot
+        # Save screenshot (best-effort — don't crash if save fails)
         screenshot_path: str | None = None
         if screenshot is not None:
-            fname = f"step_{self._step_count:04d}.png"
-            spath = self._screenshots_dir / fname
-            screenshot.save(str(spath), format="PNG")
-            screenshot_path = fname
+            try:
+                fname = f"step_{self._step_count:04d}.jpg"
+                spath = self._screenshots_dir / fname
+                if screenshot.mode in ("RGBA", "LA"):
+                    screenshot = screenshot.convert("RGB")
+                screenshot.save(str(spath), format="JPEG", quality=70)
+                screenshot_path = fname
+            except Exception as e:
+                import logging
+                logging.getLogger(__name__).warning(
+                    f"Screenshot save failed for step {self._step_count}: {e}"
+                )
 
         step = RecordedStep(
             step_index=self._step_count,
