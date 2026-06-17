@@ -15,7 +15,7 @@ DesktopAgentBench evaluates the production readiness of desktop automation agent
 | Chaos profiles | 10 |
 | Baseline agents | 6 (noop, random, rule, ufo, claude, omniparser) |
 | Total evaluation runs | 7,280 |
-| Best agent TSR (UFO) | 0.6350 |
+| Best agent TSR (UFO) | 0.6464 |
 
 See [LEADERBOARD.md](LEADERBOARD.md) to compare all six baselines. See [docs/research_paper.md](docs/research_paper.md) for full results and analysis.
 
