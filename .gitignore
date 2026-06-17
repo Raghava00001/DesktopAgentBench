@@ -1,8 +1,16 @@
 # Results and outputs
-results/session_*/logs/
-results/session_*/screenshots/
-results/session_*/runs/
+results/session_*/**
+!results/session_*/metrics.json
 *.log
+
+# Ignore 16-task sessions
+results/session_20260616_114219_a4f098/
+results/session_20260616_114848_5ed233/
+results/session_20260616_120621_4e5307/
+results/session_20260616_121841_b50cc4/
+results/session_20260616_122806_6dc7f5/
+results/session_20260616_123724_b253f8/
+test.jpg
 
 *.pyc
 __pycache__/
