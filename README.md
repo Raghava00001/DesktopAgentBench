@@ -1,10 +1,24 @@
 # DesktopAgentBench
 
+[![CI](https://github.com/Raghava00001/DesktopAgentBench/actions/workflows/ci.yml/badge.svg)](https://github.com/Raghava00001/DesktopAgentBench/actions/workflows/ci.yml)
+
 **A Windows-only, agent-agnostic reliability benchmark for desktop agents with safe chaos injection.**
 
 DesktopAgentBench evaluates the production readiness of desktop automation agents by testing them under realistic but safe adversarial conditions. It doesn't build an agent — it stress-tests yours.
 
-> **v1.0** — 30 tasks across 8 categories, 7 chaos modules, 7 metrics, 6 baseline agents.
+> **v1.0** — 30 tasks · 8 categories · 7 chaos modules · 7 metrics · 6 baseline agents · **7,280 total runs**
+
+| Stat | Value |
+|------|-------|
+| Tasks (dev split) | 30 |
+| Categories | 8 (calculator, text_editor, file_manager, graphics, browser, multi_app, settings, task_manager) |
+| Chaos profiles | 10 |
+| Baseline agents | 6 (noop, random, rule, ufo, claude, omniparser) |
+| Total evaluation runs | 7,280 |
+| Best agent TSR (UFO) | 0.6350 |
+
+See [LEADERBOARD.md](LEADERBOARD.md) to compare all six baselines. See [docs/research_paper.md](docs/research_paper.md) for full results and analysis.
+
 
 ## Key Features
 
