@@ -64,7 +64,10 @@ We tested the three core hypotheses formulated for DesktopAgentBench reliability
   - Noop Agent Latent Harm Index: 0.1169
 
 ## 5. Statistical Release Metadata
-- **No-op Session Path:** results\session_20260616_223041_0a08ee
+- **Claude Session Path:** results\session_20260617_014901_90b305
+- **Noop Session Path:** results\session_20260616_223041_0a08ee
+- **Omniparser Session Path:** results\session_20260617_100741_2b4a9e
 - **Random Session Path:** results\session_20260617_005311_f58b96
 - **Rule Session Path:** results\session_20260616_143506_d62997
+- **Ufo Session Path:** results\session_20260617_002320_391a81
 - **Status:** Frozen v1.0, task-agnostic aggregation complete.

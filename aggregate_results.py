@@ -66,11 +66,9 @@ def main():
     sessions = find_latest_sessions(results_dir)
     print(f"Discovered latest sessions: {list(sessions.keys())}")
     
-    expected_agents = ["noop", "random", "rule", "claude", "omniparser", "ufo"]
-    for agent in expected_agents:
-        if agent not in sessions:
-            print(f"ERROR: No valid 30-task session found for agent: {agent}")
-            sys.exit(1)
+    if not sessions:
+        print("ERROR: No valid 30-task sessions found.")
+        sys.exit(1)
         
     # Load session metrics
     metrics: dict[str, dict] = {}
@@ -251,9 +249,7 @@ def main():
     ] + [f"- {res}" for res in hypothesis_results] + [
         "",
         "## 5. Statistical Release Metadata",
-        f"- **No-op Session Path:** {sessions.get('noop')}",
-        f"- **Random Session Path:** {sessions.get('random')}",
-        f"- **Rule Session Path:** {sessions.get('rule')}",
+        *[f"- **{agent.title()} Session Path:** {path}" for agent, path in sorted(sessions.items())],
         "- **Status:** Frozen v1.0, task-agnostic aggregation complete."
     ]
     
