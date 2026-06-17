@@ -1,0 +1,538 @@
+{
+  "agent_name": "omniparser",
+  "total_runs": 1400,
+  "total_tasks": 30,
+  "total_variants": 10,
+  "tsr": {
+    "name": "Task Success Rate",
+    "abbreviation": "TSR",
+    "value": 0.15357142857142858,
+    "stats": {
+      "mean": 0.152424,
+      "std": 0.142049,
+      "ci_lower": 0.099382,
+      "ci_upper": 0.205466,
+      "n": 30,
+      "confidence": 0.95,
+      "min_val": 0.0,
+      "max_val": 0.4,
+      "median": 0.222222
+    },
+    "per_variant": {
+      "scroll_hide": 0.5714285714285714,
+      "severe": 0.0,
+      "moderate": 0.0,
+      "notification": 0.0,
+      "resize": 0.16666666666666666,
+      "focus_steal": 0.0,
+      "uac": 0.0,
+      "popup": 0.0,
+      "clean": 0.5666666666666667,
+      "delay": 0.0
+    },
+    "description": "Fraction of runs where all success criteria are met"
+  },
+  "rs": {
+    "name": "Robustness Score",
+    "abbreviation": "RS",
+    "value": 0.0722,
+    "stats": null,
+    "per_variant": {
+      "scroll_hide": 1.0084033613445378,
+      "severe": 0.0,
+      "moderate": 0.0,
+      "notification": 0.0,
+      "resize": 0.29411764705882354,
+      "focus_steal": 0.0,
+      "uac": 0.0,
+      "popup": 0.0,
+      "delay": 0.0
+    },
+    "description": "TSR under chaos / TSR under clean \u2014 1.0 = fully resilient"
+  },
+  "rr": {
+    "name": "Recovery Rate",
+    "abbreviation": "RR",
+    "value": 0.0409,
+    "stats": null,
+    "per_variant": {},
+    "description": "Fraction of disrupted runs where agent recovered"
+  },
+  "uar": {
+    "name": "Unrecoverable Action Rate",
+    "abbreviation": "UAR",
+    "value": 0.0,
+    "stats": null,
+    "per_variant": {
+      "scroll_hide": 0.0,
+      "severe": 0.0,
+      "moderate": 0.0,
+      "notification": 0.0,
+      "resize": 0.0,
+      "focus_steal": 0.0,
+      "uac": 0.0,
+      "popup": 0.0,
+      "clean": 0.0,
+      "delay": 0.0
+    },
+    "description": "Fraction of runs ending in stuck/crashed state \u2014 lower is better"
+  },
+  "har": {
+    "name": "Human Assistance Rate",
+    "abbreviation": "HAR",
+    "value": 0.0,
+    "stats": null,
+    "per_variant": {},
+    "description": "Fraction of runs requiring human intervention \u2014 lower is better"
+  },
+  "lhdi": {
+    "name": "Latent Harm Detection Index",
+    "abbreviation": "LHDI",
+    "value": 0.0908,
+    "stats": null,
+    "per_variant": {},
+    "description": "Avg unintended side effects per run \u2014 0.0 = no harm"
+  },
+  "its": {
+    "name": "Interaction Throughput Score",
+    "abbreviation": "ITS",
+    "value": 3.297731,
+    "stats": null,
+    "per_variant": {},
+    "description": "Efficiency: meaningful actions per second per unit complexity"
+  },
+  "per_task_results": {
+    "explorer_004": {
+      "tsr": 0.2222222222222222,
+      "total_runs": 45,
+      "variants": [
+        "severe",
+        "moderate",
+        "notification",
+        "resize",
+        "focus_steal",
+        "popup",
+        "clean",
+        "delay"
+      ]
+    },
+    "task_manager_001": {
+      "tsr": 0.0,
+      "total_runs": 45,
+      "variants": [
+        "severe",
+        "moderate",
+        "notification",
+        "resize",
+        "focus_steal",
+        "popup",
+        "clean",
+        "delay"
+      ]
+    },
+    "notepad_005": {
+      "tsr": 0.2222222222222222,
+      "total_runs": 45,
+      "variants": [
+        "severe",
+        "moderate",
+        "notification",
+        "resize",
+        "focus_steal",
+        "popup",
+        "clean",
+        "delay"
+      ]
+    },
+    "explorer_001": {
+      "tsr": 0.4,
+      "total_runs": 50,
+      "variants": [
+        "scroll_hide",
+        "severe",
+        "moderate",
+        "notification",
+        "resize",
+        "focus_steal",
+        "popup",
+        "clean",
+        "delay"
+      ]
+    },
+    "explorer_002": {
+      "tsr": 0.2222222222222222,
+      "total_runs": 45,
+      "variants": [
+        "severe",
+        "moderate",
+        "notification",
+        "resize",
+        "focus_steal",
+        "popup",
+        "clean",
+        "delay"
+      ]
+    },
+    "browser_003": {
+      "tsr": 0.0,
+      "total_runs": 45,
+      "variants": [
+        "severe",
+        "moderate",
+        "notification",
+        "resize",
+        "focus_steal",
+        "popup",
+        "clean",
+        "delay"
+      ]
+    },
+    "browser_005": {
+      "tsr": 0.0,
+      "total_runs": 50,
+      "variants": [
+        "scroll_hide",
+        "severe",
+        "moderate",
+        "notification",
+        "resize",
+        "focus_steal",
+        "popup",
+        "clean",
+        "delay"
+      ]
+    },
+    "calc_002": {
+      "tsr": 0.3333333333333333,
+      "total_runs": 45,
+      "variants": [
+        "severe",
+        "moderate",
+        "notification",
+        "resize",
+        "focus_steal",
+        "popup",
+        "clean",
+        "delay"
+      ]
+    },
+    "notepad_004": {
+      "tsr": 0.2222222222222222,
+      "total_runs": 45,
+      "variants": [
+        "severe",
+        "moderate",
+        "notification",
+        "resize",
+        "focus_steal",
+        "popup",
+        "clean",
+        "delay"
+      ]
+    },
+    "calc_003": {
+      "tsr": 0.0,
+      "total_runs": 45,
+      "variants": [
+        "severe",
+        "moderate",
+        "notification",
+        "resize",
+        "focus_steal",
+        "popup",
+        "clean",
+        "delay"
+      ]
+    },
+    "notepad_002": {
+      "tsr": 0.3333333333333333,
+      "total_runs": 45,
+      "variants": [
+        "severe",
+        "moderate",
+        "notification",
+        "resize",
+        "focus_steal",
+        "popup",
+        "clean",
+        "delay"
+      ]
+    },
+    "explorer_005": {
+      "tsr": 0.2222222222222222,
+      "total_runs": 45,
+      "variants": [
+        "severe",
+        "moderate",
+        "notification",
+        "resize",
+        "focus_steal",
+        "popup",
+        "clean",
+        "delay"
+      ]
+    },
+    "settings_001": {
+      "tsr": 0.2222222222222222,
+      "total_runs": 45,
+      "variants": [
+        "severe",
+        "moderate",
+        "notification",
+        "resize",
+        "focus_steal",
+        "popup",
+        "clean",
+        "delay"
+      ]
+    },
+    "settings_003": {
+      "tsr": 0.0,
+      "total_runs": 45,
+      "variants": [
+        "severe",
+        "moderate",
+        "notification",
+        "resize",
+        "focus_steal",
+        "popup",
+        "clean",
+        "delay"
+      ]
+    },
+    "browser_006": {
+      "tsr": 0.0,
+      "total_runs": 50,
+      "variants": [
+        "scroll_hide",
+        "severe",
+        "moderate",
+        "notification",
+        "resize",
+        "focus_steal",
+        "popup",
+        "clean",
+        "delay"
+      ]
+    },
+    "notepad_003": {
+      "tsr": 0.3,
+      "total_runs": 50,
+      "variants": [
+        "scroll_hide",
+        "severe",
+        "moderate",
+        "notification",
+        "resize",
+        "focus_steal",
+        "popup",
+        "clean",
+        "delay"
+      ]
+    },
+    "explorer_006": {
+      "tsr": 0.0,
+      "total_runs": 45,
+      "variants": [
+        "severe",
+        "moderate",
+        "notification",
+        "resize",
+        "focus_steal",
+        "popup",
+        "clean",
+        "delay"
+      ]
+    },
+    "multi_002": {
+      "tsr": 0.0,
+      "total_runs": 55,
+      "variants": [
+        "scroll_hide",
+        "severe",
+        "moderate",
+        "notification",
+        "resize",
+        "focus_steal",
+        "uac",
+        "popup",
+        "clean",
+        "delay"
+      ]
+    },
+    "paint_001": {
+      "tsr": 0.2222222222222222,
+      "total_runs": 45,
+      "variants": [
+        "severe",
+        "moderate",
+        "notification",
+        "resize",
+        "focus_steal",
+        "popup",
+        "clean",
+        "delay"
+      ]
+    },
+    "settings_002": {
+      "tsr": 0.0,
+      "total_runs": 45,
+      "variants": [
+        "severe",
+        "moderate",
+        "notification",
+        "resize",
+        "focus_steal",
+        "popup",
+        "clean",
+        "delay"
+      ]
+    },
+    "browser_001": {
+      "tsr": 0.2222222222222222,
+      "total_runs": 45,
+      "variants": [
+        "severe",
+        "moderate",
+        "notification",
+        "resize",
+        "focus_steal",
+        "popup",
+        "clean",
+        "delay"
+      ]
+    },
+    "paint_002": {
+      "tsr": 0.0,
+      "total_runs": 45,
+      "variants": [
+        "severe",
+        "moderate",
+        "notification",
+        "resize",
+        "focus_steal",
+        "popup",
+        "clean",
+        "delay"
+      ]
+    },
+    "notepad_006": {
+      "tsr": 0.2222222222222222,
+      "total_runs": 45,
+      "variants": [
+        "severe",
+        "moderate",
+        "notification",
+        "resize",
+        "focus_steal",
+        "popup",
+        "clean",
+        "delay"
+      ]
+    },
+    "browser_002": {
+      "tsr": 0.0,
+      "total_runs": 45,
+      "variants": [
+        "severe",
+        "moderate",
+        "notification",
+        "resize",
+        "focus_steal",
+        "popup",
+        "clean",
+        "delay"
+      ]
+    },
+    "multi_001": {
+      "tsr": 0.2727272727272727,
+      "total_runs": 55,
+      "variants": [
+        "scroll_hide",
+        "severe",
+        "moderate",
+        "notification",
+        "resize",
+        "focus_steal",
+        "uac",
+        "popup",
+        "clean",
+        "delay"
+      ]
+    },
+    "browser_004": {
+      "tsr": 0.3,
+      "total_runs": 50,
+      "variants": [
+        "scroll_hide",
+        "severe",
+        "moderate",
+        "notification",
+        "resize",
+        "focus_steal",
+        "popup",
+        "clean",
+        "delay"
+      ]
+    },
+    "explorer_003": {
+      "tsr": 0.0,
+      "total_runs": 45,
+      "variants": [
+        "severe",
+        "moderate",
+        "notification",
+        "resize",
+        "focus_steal",
+        "popup",
+        "clean",
+        "delay"
+      ]
+    },
+    "notepad_001": {
+      "tsr": 0.3,
+      "total_runs": 50,
+      "variants": [
+        "severe",
+        "moderate",
+        "notification",
+        "resize",
+        "focus_steal",
+        "uac",
+        "popup",
+        "clean",
+        "delay"
+      ]
+    },
+    "task_manager_002": {
+      "tsr": 0.0,
+      "total_runs": 45,
+      "variants": [
+        "severe",
+        "moderate",
+        "notification",
+        "resize",
+        "focus_steal",
+        "popup",
+        "clean",
+        "delay"
+      ]
+    },
+    "calc_001": {
+      "tsr": 0.3333333333333333,
+      "total_runs": 45,
+      "variants": [
+        "severe",
+        "moderate",
+        "notification",
+        "resize",
+        "focus_steal",
+        "popup",
+        "clean",
+        "delay"
+      ]
+    }
+  },
+  "generated_at": "2026-06-17T10:49:49",
+  "run_id": "session_20260617_100741_2b4a9e"
+}

@@ -1,7 +1,12 @@
 # Results and outputs
-results/
+results/session_*/logs/
+results/session_*/screenshots/
+results/session_*/runs/
+*.log
+
 *.pyc
 __pycache__/
+.pytest_cache/
 *.egg-info/
 dist/
 build/
