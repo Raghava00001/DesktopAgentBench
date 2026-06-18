@@ -31,27 +31,36 @@ def find_latest_sessions(results_dir: Path) -> dict[str, Path]:
     agent_sessions: dict[str, tuple[float, Path]] = {}
     
     if not results_dir.exists():
-        return {}
+        print("ERROR: Results directory does not exist.", file=sys.stderr)
+        sys.exit(1)
         
     for p in results_dir.iterdir():
         if p.is_dir() and p.name.startswith("session_"):
             metrics_path = p / "metrics.json"
-            if metrics_path.exists():
-                try:
-                    with open(metrics_path, "r", encoding="utf-8") as f:
-                        data = json.load(f)
-                        agent = data.get("agent_name")
-                        if agent:
-                            total_tasks = data.get("total_tasks", 0)
-                            if total_tasks != 30:
-                                print(f"SKIPPED: {agent} session {p} has {total_tasks} tasks, expected 30")
-                                continue
-                            mtime = metrics_path.stat().st_mtime
-                            if agent not in agent_sessions or mtime > agent_sessions[agent][0]:
-                                agent_sessions[agent] = (mtime, p)
-                except Exception as e:
-                    print(f"Warning: Failed to parse metrics in {p}: {e}")
+            if not metrics_path.exists():
+                print(f"REPORT: Invalid session {p.name} - 'metrics.json' is missing. Skipping.", file=sys.stderr)
+                continue
+                
+            try:
+                with open(metrics_path, "r", encoding="utf-8") as f:
+                    data = json.load(f)
+                
+                agent = data.get("agent_name")
+                if not agent:
+                    print(f"REPORT: Invalid session {p.name} - 'agent_name' is missing in 'metrics.json'. Skipping.", file=sys.stderr)
+                    continue
                     
+                total_tasks = data.get("total_tasks", 0)
+                if total_tasks != 30:
+                    print(f"REPORT: Incomplete session {p.name} for agent '{agent}' has {total_tasks} tasks (expected 30). Skipping.")
+                    continue
+                    
+                mtime = metrics_path.stat().st_mtime
+                if agent not in agent_sessions or mtime > agent_sessions[agent][0]:
+                    agent_sessions[agent] = (mtime, p)
+            except Exception as e:
+                print(f"REPORT: Invalid session {p.name} - failed to parse metrics: {e}. Skipping.", file=sys.stderr)
+        
     return {agent: path for agent, (_, path) in agent_sessions.items()}
 
 def main():
@@ -66,8 +75,10 @@ def main():
     sessions = find_latest_sessions(results_dir)
     print(f"Discovered latest sessions: {list(sessions.keys())}")
     
-    if not sessions:
-        print("ERROR: No valid 30-task sessions found.")
+    EXPECTED_AGENTS = {"noop", "random", "rule", "claude", "omniparser", "ufo"}
+    missing_agents = EXPECTED_AGENTS - set(sessions.keys())
+    if missing_agents:
+        print(f"ERROR: Missing valid 30-task sessions for expected agents: {sorted(list(missing_agents))}", file=sys.stderr)
         sys.exit(1)
         
     # Load session metrics

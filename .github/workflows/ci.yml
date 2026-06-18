@@ -22,11 +22,10 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
 
-      - name: Install dependencies
+      - name: Install package and dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install pydantic pyyaml pillow numpy scipy click rich jinja2
-          pip install pytest pytest-cov
+          pip install -e ".[dev]"
 
       - name: Validate task corpus (30 tasks)
         run: python bench.py validate
