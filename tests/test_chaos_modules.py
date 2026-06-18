@@ -4,7 +4,8 @@ from __future__ import annotations
 
 import pytest
 
-from src.chaos.injector import ChaosModule, ChaosContext, ChaosEvent, ChaosInjector
+from src.chaos.interface import ChaosModule, ChaosContext
+from src.chaos.injector import ChaosEvent, ChaosInjector
 from src.chaos.scheduler import ChaosScheduler
 from src.chaos.registry import ChaosModuleRegistry
 from src.chaos.profiles import profile_summary, is_clean_profile, count_enabled_modules

@@ -120,13 +120,6 @@ class RandomAgent(AgentAdapter):
         # In a real benchmark, this would use pyautogui or similar
         return True
 
-    def get_screenshot(self) -> Image.Image:
-        try:
-            from PIL import ImageGrab
-            return ImageGrab.grab()
-        except Exception:
-            return Image.new("RGB", (1920, 1080), color=(0, 0, 0))
-
     def get_state(self) -> dict[str, Any]:
         return {
             "step_count": self._step_count,

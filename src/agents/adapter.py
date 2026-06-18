@@ -114,7 +114,6 @@ class AgentAdapter(ABC):
         """
         ...
 
-    @abstractmethod
     def get_screenshot(self) -> Image.Image:
         """
         Capture the current screen state.
@@ -122,7 +121,11 @@ class AgentAdapter(ABC):
         The agent is responsible for its own screenshot mechanism.
         This allows agents to use different capture methods (GDI, DXGI, etc.)
         """
-        ...
+        try:
+            from PIL import ImageGrab
+            return ImageGrab.grab()
+        except Exception:
+            return Image.new("RGB", (1920, 1080), color=(0, 0, 0))
 
     @abstractmethod
     def get_state(self) -> dict[str, Any]:

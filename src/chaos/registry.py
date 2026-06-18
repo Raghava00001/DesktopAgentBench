@@ -10,10 +10,8 @@ from __future__ import annotations
 import importlib
 import logging
 from pathlib import Path
-from typing import TYPE_CHECKING
 
-if TYPE_CHECKING:
-    from src.chaos.injector import ChaosModule
+from src.chaos.interface import ChaosModule
 
 logger = logging.getLogger(__name__)
 

@@ -285,13 +285,6 @@ class OmniParserAgent(AgentAdapter):
             time.sleep(action.parameters.get("seconds", 1.0))
         return True
 
-    def get_screenshot(self) -> Image.Image:
-        try:
-            from PIL import ImageGrab
-            return ImageGrab.grab()
-        except Exception:
-            return Image.new("RGB", (1920, 1080), color=(10, 10, 10))
-
     def get_state(self) -> dict[str, Any]:
         return {
             "step_count": self._step_count,

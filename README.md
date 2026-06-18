@@ -116,3 +116,40 @@ All chaos injections are:
 ## License
 
 MIT
+
+## Architecture
+
+DesktopAgentBench isolates orchestrator lifecycle loops, environment setups, and baseline evaluations. Below is an overview of the directory structure:
+
+```
+src/
+├── core/                   # Orchestrator core
+│   ├── config.py           # Benchmark YAML & Pydantic settings schema
+│   ├── orchestrator.py     # Setup, run loop control, and clean teardown
+│   ├── evaluator.py        # System diffing & task criteria validators
+│   └── recorder.py         # JSONL logger, actions and screenshot saver
+├── tasks/                  # Task loader and schemas
+│   ├── schema.py           # Task criteria, preconditions, and metadata types
+│   ├── loader.py           # Scrapes tasks/ folders and verifies structures
+│   ├── split_manager.py    # Segment public dev set vs private held-out set
+│   └── variant_generator.py# Expands clean configs to combined chaos runs
+├── agents/                 # Agent interfaces and baseline adapters
+│   ├── adapter.py          # Abstract AgentAdapter interface
+│   ├── registry.py         # Dynamic plugin discovery for agent codebases
+│   └── builtin/            # Baseline models (noop, random, rule, claude)
+├── chaos/                  # Parameterized environment injectors
+│   ├── injector.py         # Thread-safe launcher & cleanup tracker
+│   ├── scheduler.py        # Poisson timing model for trigger signals
+│   ├── registry.py         # Dynamic load mechanisms for chaos tasks
+│   └── modules/            # Visual disruption scripts (UAC, popups, etc.)
+└── platform/               # Low-level Windows Win32 ctypes hooks
+    ├── process_manager.py  # Spawns, monitors, and terminates processes
+    ├── window_manager.py   # Locates application HWND boundaries
+    └── win32_utils.py      # Win32 DLL calls (foreground locks, displays)
+```
+
+#### 🔄 System Sequence Lifecycle
+1. **Configure**: `bench.py` reads user parameters and overrides defaults using `src/core/config.py`.
+2. **Assemble**: `TaskLoader` validates JSON files against `src/tasks/schema.py` while `VariantGenerator` pairs them with chaos settings.
+3. **Execute**: The `Orchestrator` resets the Windows environment (`_clean_task_artifacts`), spins up background scheduler loops (`ChaosScheduler`), launches applications (`ProcessManager`), and yields control to the agent via `AgentAdapter.decide()`.
+4. **Evaluate**: At shutdown, `Evaluator` runs success checks, collects files/registry changes to verify `LHDI` (Latent Harm Detection Index), and `Reporter` outputs markdown summaries.

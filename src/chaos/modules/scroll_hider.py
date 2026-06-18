@@ -14,7 +14,8 @@ import logging
 import time
 from typing import Any
 
-from src.chaos.injector import ChaosModule, ChaosContext, ChaosEvent
+from src.chaos.interface import ChaosModule, ChaosContext
+from src.chaos.injector import ChaosEvent
 
 logger = logging.getLogger(__name__)
 
