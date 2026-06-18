@@ -2,9 +2,9 @@ name: CI
 
 on:
   push:
-    branches: [ master, main ]
+    branches: [ main, master ]
   pull_request:
-    branches: [ master, main ]
+    branches: [ main, master ]
 
 jobs:
   validate-and-test:
@@ -28,7 +28,7 @@ jobs:
           pip install -e ".[dev]"
 
       - name: Validate task corpus (30 tasks)
-        run: python bench.py validate
+        run: python bench.py validate --tasks-dir tasks/
 
       - name: Run unit tests
-        run: python -m pytest --tb=short -q
+        run: python -m pytest
